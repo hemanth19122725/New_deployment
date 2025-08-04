@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Deployment Form</title>
+</head>
+<body>
+  <h1>Create Deployment Destination</h1>
+  <form id="deploymentForm">
+    <input type="text" id="name" placeholder="Name" required /><br />
+    
+    <select id="type" required>
+      <option value="AWS">AWS</option>
+      <option value="Azure">Azure</option>
+      <option value="GCP">GCP</option>
+      <option value="VM(SSH)">VM(SSH)</option>
+      <option value="Custom">Custom</option>
+    </select><br />
+
+    <input type="text" id="region" placeholder="Region (e.g. us-east-1)" required /><br />
+
+    <input type="text" id="ip" placeholder="IP" required /><br />
+    <input type="number" id="port" placeholder="Port" required /><br />
+    <input type="text" id="username" placeholder="Username" required /><br />
+    <input type="password" id="password" placeholder="Password" required /><br />
+    <input type="text" id="base_path" placeholder="Base Path" required /><br />
+    
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("deploymentForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        name: document.getElementById("name").value,
+        type: document.getElementById("type").value,
+        region: document.getElementById("region").value,
+        config: {
+          ip: document.getElementById("ip").value,
+          port: parseInt(document.getElementById("port").value),
+          username: document.getElementById("username").value,
+          password: document.getElementById("password").value,
+          base_path: document.getElementById("base_path").value
+        }
+      };
+
+      try {
+        const appId = "myApp123"; // Replace with dynamic app ID if needed
+        const response = await fetch(`http://localhost:8000/app/${appId}/destinations`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          alert("Error: " + error.detail);
+        } else {
+          const result = await response.json();
+          alert("Success! Data saved.");
+          console.log(result);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to connect to backend.");
+      }
+    });
+  </script>
+</body>
+</html>

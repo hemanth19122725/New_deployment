@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deployment Destinations</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-white-100 p-6">
+<div class="max-w-4xl mx-auto">
+<h1 class="text-2xl font-bold mb-4">Deployment Destinations</h1>
+ 
+
+<form id="destinationForm" class="space-y-6">
+<!-- Container for dynamic destination inputs -->
+<div id="destinationContainer"></div>
+ 
+      <button type="button" onclick="addDestination()"
+
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+
+        + Add Deployment Destination
+</button>
+ 
+      <button type="submit"
+
+        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+
+        Submit Destinations
+</button>
+</form>
+</div>
+ 
+  <!-- <script>
+
+    let count = 0;
+ 
+    const regionOptions = {
+
+      aws: ["us-east-1", "us-west-2", "eu-central-1"],
+
+      azure: ["eastus", "westeurope", "southeastasia"],
+
+      gcp: ["us-central1", "europe-west1", "asia-east1"],
+
+      vm: ["local", "remote"],
+
+      custom: ["custom-region"]
+
+    };
+ 
+    function addDestination() {
+
+      const id = count++;
+
+      const container = document.getElementById("destinationContainer");
+ 
+      const wrapper = document.createElement("div");
+
+      wrapper.className = "bg-white p-4 rounded shadow space-y-3";
+
+      wrapper.innerHTML = `
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-sm font-medium">Name *</label>
+<input type="text" name="name" required
+
+              class="w-full border rounded px-3 py-2" />
+</div>
+ 
+          <div>
+<label class="block text-sm font-medium">Type *</label>
+<select name="type" required onchange="updateRegionOptions(this, ${id})"
+
+              class="w-full border rounded px-3 py-2">
+<option value="">Select</option>
+<option value="aws">AWS</option>
+<option value="azure">Azure</option>
+<option value="gcp">GCP</option>
+<option value="vm">VM (SSH)</option>
+<option value="custom">Custom</option>
+</select>
+</div>
+ 
+          <div>
+<label class="block text-sm font-medium">Region *</label>
+<select name="region" id="region-${id}" required
+
+              class="w-full border rounded px-3 py-2">
+<option value="">Select a type first</option>
+</select>
+</div>
+ 
+          <div>
+<label class="block text-sm font-medium">Credentials *</label>
+<input type="text" name="credentials" required
+
+              class="w-full border rounded px-3 py-2" />
+</div>
+</div>
+ 
+        <button type="button"
+
+          class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+
+          onclick="testConnection(this)">
+
+          Test Connection
+</button>
+
+      `;
+ 
+      container.appendChild(wrapper);
+
+    }
+ 
+    function updateRegionOptions(select, id) {
+
+      const type = select.value;
+
+      const regionSelect = document.getElementById(`region-${id}`);
+
+      regionSelect.innerHTML = "";
+ 
+      if (regionOptions[type]) {
+
+        regionOptions[type].forEach(region => {
+
+          const opt = document.createElement("option");
+
+          opt.value = region;
+
+          opt.text = region;
+
+          regionSelect.add(opt);
+
+        });
+
+      } else {
+
+        regionSelect.innerHTML = "<option value=''>No regions available</option>";
+
+      }
+
+    }
+ 
+    function testConnection(button) {
+
+      const wrapper = button.closest("div");
+
+      const name = wrapper.querySelector("input[name='name']").value;
+
+      const type = wrapper.querySelector("select[name='type']").value;
+
+      const region = wrapper.querySelector("select[name='region']").value;
+
+      const credentials = wrapper.querySelector("input[name='credentials']").value;
+ 
+      if (!name || !type || !region || !credentials) {
+
+        alert("Please fill in all fields before testing connection.");
+
+        return;
+
+      }
+ 
+      // Simulate testing
+
+      alert(`Testing connection for ${name} (${type} - ${region})...`);
+
+    }
+ 
+    // Validate on submit
+
+    document.getElementById("destinationForm").addEventListener("submit", (e) => {
+
+      const inputs = document.querySelectorAll("#destinationContainer input, #destinationContainer select");
+
+      for (const input of inputs) {
+
+        if (!input.value.trim()) {
+
+          alert("Please fill in all required fields.");
+
+          e.preventDefault();
+
+          return;
+
+        }
+      }
+ 
+      alert("Form submitted successfully!");
+
+    });
+</script> -->
+<script src="logic.js"></script>
+</body>
+</html>
+
+
+
+ 
