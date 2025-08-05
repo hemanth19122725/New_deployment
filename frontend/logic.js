@@ -109,6 +109,7 @@ const regionOptions = {
  
   function testConnection(button) {
   const wrapper = button.closest("div");
+
   const name = wrapper.querySelector("input[name='name']").value;
   const type = wrapper.querySelector("select[name='type']").value;
   const region = wrapper.querySelector("select[name='region']").value;
@@ -126,7 +127,7 @@ const regionOptions = {
     return;
   }
 
-  alert(`Testing connection for ${name} (${type} - ${region}) with Username: ${username}${ipField && ipField.value ? `, IP: ${ipField.value}` : ""}`);
+  alert(`Testing connection for ${name} (${type} - ${region}) with Username: ${username}, ${ipField && ipField.value ? `, IP: ${ipField.value}` : ""}`);
 }
 
 

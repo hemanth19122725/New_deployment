@@ -1,0 +1,53 @@
+<!-- <div class="max-w-4xl mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-4">Deployment Destinations</h1>
+
+  <form (ngSubmit)="onSubmit()" #destinationForm="ngForm" class="space-y-6">
+    <div *ngFor="let dest of destinations" class="bg-white p-4 rounded shadow space-y-3">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium">Name *</label>
+          <input type="text" [(ngModel)]="dest.name" name="name{{dest.id}}" required class="w-full border rounded px-3 py-2" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Type *</label>
+          <select [(ngModel)]="dest.type" name="type{{dest.id}}" required class="w-full border rounded px-3 py-2" (change)="updateRegionOptions(dest, dest.type)">
+            <option value="">Select</option>
+            <option value="aws">AWS</option>
+            <option value="azure">Azure</option>
+            <option value="gcp">GCP</option>
+            <option value="vm">VM (SSH)</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Region *</label>
+          <select [(ngModel)]="dest.region" name="region{{dest.id}}" required class="w-full border rounded px-3 py-2">
+            <option value="">Select a region</option>
+            <option *ngFor="let region of regionOptions[dest.type]" [value]="region">
+              {{ region }}
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium">Credentials *</label>
+          <input type="text" [(ngModel)]="dest.credentials" name="credentials{{dest.id}}" required class="w-full border rounded px-3 py-2" />
+        </div>
+      </div>
+
+      <button type="button" (click)="testConnection(dest)" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+        Test Connection
+      </button>
+    </div>
+
+    <button type="button" (click)="addDestination()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      + Add Deployment Destination
+    </button>
+
+    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+      Submit Destinations
+    </button>
+  </form>
+</div> -->
