@@ -14,7 +14,7 @@ from sftp_client import (
 
 app = FastAPI()
 
-# Enable CORS
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
