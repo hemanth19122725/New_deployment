@@ -29,6 +29,8 @@ export class AddConnectionComponent implements OnInit {
     protocol: '',
     trigger_script_path: '', // ✅ Add this line
   };
+
+  baseUrl: string = "http://localhost:8000";
  
   constructor(
     private service: ConnectionService,
@@ -86,7 +88,7 @@ onFileSelected(event: any) {
   const formData = new FormData();
   formData.append('file', file);
 
-  this.http.post('/upload', formData).subscribe({
+  this.http.post(this.baseUrl+'/upload', formData).subscribe({
     next: () => {
       this.addLog(`✅ Uploaded: ${file.name}`);
       this.loadFiles();
@@ -150,6 +152,22 @@ addLog(message: string) {
     });
   }
 }
+ connect(name: string) {
+    this.service.connectExisting(name).subscribe({
+      next: (res) => {
+        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ✅ Connected to: ${name}`);
+      },
+      error: (err) => {
+        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ❌ Failed to connect: ${name}`);
+      }
+    });
+  }
+  disconnect() {
+    this.service.disconnect().subscribe(() => {
+      this.logs.unshift(`[${new Date().toLocaleTimeString()}] 🔌 Disconnected`);
+    });
+  }
+
  
 }
  

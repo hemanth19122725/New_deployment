@@ -15,7 +15,7 @@ import { EditConnectionComponent } from './edit-connection/edit-connection.compo
     AppComponent,
     AddConnectionComponent,
     HomeComponent,
-    EditConnectionComponent,
+    EditConnectionComponent
   ],
   imports: [
     BrowserModule,

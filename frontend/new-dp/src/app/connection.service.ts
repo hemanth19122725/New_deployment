@@ -52,6 +52,11 @@ export class ConnectionService {
   deleteFile(filename: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/delete?filename=${encodeURIComponent(filename)}`);
   }
-  
+  uploadFile(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    console.log('Uploading to:', `${this.baseUrl}/upload`);
+    return this.http.post(`${this.baseUrl}/upload`, formData);
+  }
 
 }
