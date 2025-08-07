@@ -284,13 +284,13 @@
             </div>
           </div>
           <div class="mb-4">
-  <label for="trigger_script_path" class="block mb-1 text-gray-700 font-medium">Trigger Script Path</label>
-  <input
-    type="text"
-    id="trigger_script_path"
-    name="trigger_script_path"
-    class="w-full border border-gray-300 rounded px-3 py-2"
-    [(ngModel)]="formModel.trigger_script_path"
+            <label for="trigger_script_path" class="block mb-1 text-gray-700 font-medium">Trigger Script Path</label>
+              <input
+                type="text"
+                id="trigger_script_path"
+                name="trigger_script_path"
+                class="w-full border border-gray-300 rounded px-3 py-2"
+                [(ngModel)]="formModel.trigger_script_path"
   />
 </div>
 
@@ -312,4 +312,44 @@
       </div>
     </div>
   </div>
+  <!-- File Operations Section -->
+<div *ngIf="connected" class="mt-10">
+  <h3 class="text-xl font-bold mb-4">📁 Remote File Operations</h3>
+
+  <!-- File Upload -->
+  <div class="mb-4">
+    <label class="block text-sm font-medium mb-2">Upload File</label>
+    <input type="file" (change)="onFileSelected($event)" class="border p-2 rounded w-full" />
+  </div>
+
+  <!-- File List -->
+  <div class="bg-white shadow border rounded p-4 mt-4">
+    <h4 class="text-md font-semibold mb-3">Remote Files</h4>
+    <ul *ngIf="fileList.length > 0; else noFiles" class="space-y-2">
+      <li *ngFor="let file of fileList" class="flex justify-between items-center border-b pb-2">
+        <span>{{ file }}</span>
+        <div class="flex gap-2">
+          <button (click)="downloadFile(file)" class="px-2 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600">
+            ⬇️ Download
+          </button>
+          <button (click)="deleteFile(file)" class="px-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600">
+            🗑️ Delete
+          </button>
+        </div>
+      </li>
+    </ul>
+    <ng-template #noFiles>
+      <p class="text-gray-500 text-sm">No files found on the server.</p>
+    </ng-template>
+  </div>
+
+  <!-- Logs Section -->
+  <div class="bg-gray-100 rounded p-4 mt-6">
+    <h4 class="text-md font-semibold mb-2">📜 Logs</h4>
+    <ul class="text-sm text-gray-700 space-y-1 max-h-40 overflow-y-auto">
+      <li *ngFor="let log of logs">{{ log }}</li>
+    </ul>
+  </div>
+</div>
+
 </div>
