@@ -1,0 +1,64 @@
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <!-- Modal Box -->
+  <div
+    class="bg-white rounded-xl shadow-2xl p-6 w-[90%] max-w-3xl max-h-[90vh] overflow-y-auto relative text-gray-800 text-[15px]">
+ 
+    <!-- Close Button -->
+    <button
+      class="absolute top-3 right-3 text-gray-500 hover:text-black text-lg"
+      (click)="goBack()"
+      aria-label="Close">
+      ✖
+    </button>
+ 
+    <!-- Title -->
+    <h2 class="text-2xl font-bold mb-4 border-b pb-2">Deployment Details</h2>
+ 
+    <!-- Deployment Info Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-4">
+      <div>
+        <p class="font-semibold text-gray-600">Name</p>
+        <p>{{ deploy?.name }}</p>
+      </div>
+      <div>
+        <p class="font-semibold text-gray-600">Description</p>
+        <p class="whitespace-pre-wrap break-words">{{ deploy?.description }}</p>
+      </div>
+      <div>
+        <p class="font-semibold text-gray-600">Location</p>
+        <p>{{ deploy?.deploy_location }}</p>
+      </div>
+      <div>
+        <p class="font-semibold text-gray-600">Type</p>
+        <p>{{ deploy?.deploy_type }}</p>
+      </div>
+      <div>
+        <p class="font-semibold text-gray-600">Protocol</p>
+        <p>{{ deploy?.protocol }}</p>
+      </div>
+      <div>
+        <p class="font-semibold text-gray-600">Host</p>
+        <p class="font-mono text-sm">{{ deploy?.host }}</p>
+      </div>
+      <div>
+        <p class="font-semibold text-gray-600">Username</p>
+        <p>{{ deploy?.username }}</p>
+      </div>
+      <div>
+        <p class="font-semibold text-gray-600">Last Connected</p>
+        <p>{{ deploy?.connected_at | date:'short' }}</p>
+      </div>
+    </div>
+ 
+    <!-- Back Button -->
+    <div class="mt-6 text-right">
+      <button
+        class="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition"
+        (click)="goBack()">
+        Back
+      </button>
+    </div>
+  </div>
+</div>
+ 
