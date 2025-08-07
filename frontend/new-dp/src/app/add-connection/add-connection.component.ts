@@ -23,7 +23,8 @@ export class AddConnectionComponent implements OnInit {
     username: '',
     password: '',
     remote_path: '',
-    protocol: ''
+    protocol: '',
+    trigger_script_path: '' // ✅ Add this
   };
  
   constructor(
@@ -58,6 +59,7 @@ export class AddConnectionComponent implements OnInit {
   formData.append('password', formValues.password);
   formData.append('remote_path', formValues.remote_path);
   formData.append('protocol', formValues.protocol);
+  formData.append('trigger_script_path', formValues.trigger_script_path);
 
   if (this.isEditMode) {
     this.service.updateConnection(this.existingName, formData).subscribe(() => {
