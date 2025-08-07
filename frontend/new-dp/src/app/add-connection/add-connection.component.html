@@ -1,0 +1,95 @@
+<div class="p-6 max-w-4xl mx-auto">
+    
+  <form #form="ngForm" (ngSubmit)="onSubmit(form)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+   
+    <input
+      name="name"
+      placeholder="Name"
+      [(ngModel)]="formModel.name"
+      [readonly]="isEditMode"
+      required
+      class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"/>
+ 
+    <input
+      name="description"
+      placeholder="Description"
+      [(ngModel)]="formModel.description"
+      required
+      class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"/>
+ 
+    <select
+      name="deploy_location"
+      [(ngModel)]="formModel.deploy_location"
+      required
+      class="w-full border border-gray-300 rounded px-4 py-2 bg-white focus:outline-none focus:ring focus:border-blue-400">
+
+      <option value="" disabled selected>Deploy Location</option>
+      <option value="aws">AWS</option>
+      <option value="gcp">GCP</option>
+      <option value="azure">Azure</option>
+      <option value="Linux">Linux</option>
+    </select>
+ 
+    <select
+      name="deploy_type"
+      [(ngModel)]="formModel.deploy_type"
+      required
+      class="w-full border border-gray-300 rounded px-4 py-2 bg-white focus:outline-none focus:ring focus:border-blue-400">
+      <option value="" disabled selected>Deploy Type</option>
+      <option value="Frontend">Frontend</option>
+      <option value="Backend">Backend</option>
+    </select>
+ 
+    <input
+      name="host"
+      placeholder="Host"
+      [(ngModel)]="formModel.host"
+      required
+      class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"/>
+ 
+    <input
+      name="username"
+      placeholder="Username"
+      [(ngModel)]="formModel.username"
+      required
+      class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"/>
+ 
+    <input
+      name="password"
+      placeholder="Password"
+      [(ngModel)]="formModel.password"
+      type="password"
+      required
+      class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
+    />
+ 
+    <input
+      name="remote_path"
+      placeholder="Remote Path"
+      [(ngModel)]="formModel.remote_path"
+      required
+      class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
+    />
+ 
+    <select
+      name="protocol"
+      [(ngModel)]="formModel.protocol"
+      required
+      class="w-full border border-gray-300 rounded px-4 py-2 bg-white focus:outline-none focus:ring focus:border-blue-400"
+    >
+      <option value="" disabled selected>Protocol</option>
+      <option value="sftp">SFTP</option>
+      <option value="scp">SCP</option>
+    </select>
+ 
+    <div class="md:col-span-2">
+      <button
+        type="submit"
+        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+      >
+        {{ isEditMode ? 'Update' : 'Save & Connect' }}
+      </button>
+    </div>
+ 
+  </form>
+</div>

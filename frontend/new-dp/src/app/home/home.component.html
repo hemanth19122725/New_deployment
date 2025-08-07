@@ -1,0 +1,67 @@
+<div class="p-6">
+  <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4">
+  <h2 class="text-3xl font-bold flex items-center gap-2">
+    <span>Existing Deployments</span>
+  </h2>
+  <button
+    routerLink="/add"
+    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 
+    transition focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <i class="fas fa-plus"></i>
+    Add Connection
+  </button>
+  </div>
+
+ 
+  <div class="overflow-x-auto p-4">
+  <table class="w-full border-collapse bg-white shadow-md rounded-lg">
+    <thead class="bg-blue-50 text-gray-700">
+      <tr>
+        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Name</th>
+        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Description</th>
+        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Location</th>
+        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Type</th>
+        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Protocol</th>
+        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Host</th>
+        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Last Connected</th>
+        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Action</th>
+      </tr>
+    </thead>
+
+    <tbody class="divide-y divide-gray-200">
+      <tr *ngFor="let conn of connections" class="hover:bg-gray-100 transition duration-200">
+        <td class="px-4 py-4 text-gray-800">{{ conn.name }}</td>
+        <td class="px-4 py-4 text-gray-800">{{ conn.description }}</td>
+        <td class="px-4 py-4 text-gray-600">{{ conn.deploy_location }}</td>
+        <td class="px-4 py-4 text-gray-600">{{ conn.deploy_type }}</td>
+        <td class="px-4 py-4 text-gray-600">{{ conn.protocol }}</td>
+        <td class="px-4 py-4 text-gray-600">{{ conn.host }}</td>
+        <td class="px-4 py-4 text-gray-600">{{ formatTimestamp(conn.connected_at) }}</td>
+        <td class="px-4 py-4 flex space-x-3">
+
+          <button
+          (click)="delete(conn.name)"
+            class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-200 flex 
+            items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-400"
+            title="Delete this connection">
+            <i class="fas fa-trash"></i>
+            Delete
+          </button>
+
+          <button
+            (click)="edit(conn.name)"
+            class="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition duration-200 flex 
+            items-center gap-2 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            <i class="fas fa-edit"></i>
+            Edit
+          </button>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+ 
+
+  
+</div>
