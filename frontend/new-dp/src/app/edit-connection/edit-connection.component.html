@@ -1,0 +1,257 @@
+<div class="p-6">
+  <!-- Header Section -->
+  <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4">
+    <h2 class="text-3xl font-bold flex items-center gap-2">
+      <i class="fas fa-edit text-orange-600"></i>
+      <span>Edit Connection</span>
+    </h2>
+    <div class="flex gap-2">
+      <button
+        routerLink="/"
+        class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 
+        transition focus:outline-none focus:ring-2 focus:ring-gray-500">
+        <i class="fas fa-arrow-left"></i>
+        Back to Connections
+      </button>
+      <!-- <button
+        type="button"
+        (click)="resetForm()"
+        class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 
+        transition focus:outline-none focus:ring-2 focus:ring-yellow-500">
+        <i class="fas fa-undo"></i>
+        Reset Changes
+      </button> -->
+    </div>
+  </div>
+
+  <!-- Status Alert -->
+  <div class="max-w-6xl mx-auto mb-4">
+    <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 flex items-center gap-2">
+      <i class="fas fa-info-circle text-orange-600"></i>
+      <span class="text-orange-800 text-sm">
+        <strong>Note:</strong> You are editing connection "{{ existingName }}". The connection name cannot be changed.
+      </span>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="max-w-6xl mx-auto">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="bg-orange-50 px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <i class="fas fa-cog text-orange-600"></i>
+          Update Connection Settings
+        </h3>
+        <p class="text-sm text-gray-600 mt-1">Modify existing connection configuration</p>
+      </div>
+
+      <div class="p-6">
+        <form #form="ngForm" (ngSubmit)="onSubmit(form)" class="space-y-6">
+          
+          <!-- Basic Information Section -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                <i class="fas fa-tag text-gray-500 mr-2"></i>Connection Name
+              </label>
+              <input
+                name="name"
+                [(ngModel)]="formModel.name"
+                readonly
+                class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-600 cursor-not-allowed shadow-sm"/>
+              <p class="text-xs text-gray-500">
+                <i class="fas fa-lock mr-1"></i>Connection name cannot be modified
+              </p>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                <i class="fas fa-file-alt text-gray-500 mr-2"></i>Description *
+              </label>
+              <input
+                name="description"
+                placeholder="Update connection description"
+                [(ngModel)]="formModel.description"
+                required
+                class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200 bg-white shadow-sm"/>
+              <p class="text-xs text-gray-500">Update the connection description</p>
+            </div>
+          </div>
+
+          <!-- Deployment Configuration Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-cloud text-orange-600"></i>
+              Deployment Configuration
+            </h4>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-map-marker-alt text-gray-500 mr-2"></i>Deploy Location *
+                </label>
+                <select
+                  name="deploy_location"
+                  [(ngModel)]="formModel.deploy_location"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200 shadow-sm">
+                  <option value="" disabled>Select deployment location</option>
+                  <option value="aws">🟠 AWS (Amazon Web Services)</option>
+                  <option value="gcp">🔵 GCP (Google Cloud Platform)</option>
+                  <option value="azure">🔷 Azure (Microsoft Azure)</option>
+                  <option value="Linux">🐧 Linux Server</option>
+                </select>
+                <p class="text-xs text-gray-500">Update deployment platform if needed</p>
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-layer-group text-gray-500 mr-2"></i>Deploy Type *
+                </label>
+                <select
+                  name="deploy_type"
+                  [(ngModel)]="formModel.deploy_type"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200 shadow-sm">
+                  <option value="" disabled>Select deployment type</option>
+                  <option value="Frontend">🎨 Frontend Application</option>
+                  <option value="Backend">⚙️ Backend Service</option>
+                </select>
+                <p class="text-xs text-gray-500">Update application type if needed</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Connection Details Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-network-wired text-orange-600"></i>
+              Connection Details
+            </h4>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-server text-gray-500 mr-2"></i>Host *
+                </label>
+                <input
+                  name="host"
+                  placeholder="e.g., 192.168.1.100 or example.com"
+                  [(ngModel)]="formModel.host"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200 bg-white shadow-sm"/>
+                <p class="text-xs text-gray-500">Update server IP address or domain name</p>
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-shield-alt text-gray-500 mr-2"></i>Protocol *
+                </label>
+                <select
+                  name="protocol"
+                  [(ngModel)]="formModel.protocol"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200 shadow-sm">
+                  <option value="" disabled>Select transfer protocol</option>
+                  <option value="sftp">🔐 SFTP (SSH File Transfer Protocol)</option>
+                  <option value="scp">📁 SCP (Secure Copy Protocol)</option>
+                </select>
+                <p class="text-xs text-gray-500">Change transfer protocol if needed</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Authentication Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-key text-orange-600"></i>
+              Authentication
+            </h4>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+              <div class="flex items-center gap-2 text-yellow-800">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span class="text-sm font-medium">Security Notice</span>
+              </div>
+              <p class="text-yellow-700 text-sm mt-1">
+                Update credentials only if they have changed. Leave password empty to keep existing password.
+              </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-user text-gray-500 mr-2"></i>Username *
+                </label>
+                <input
+                  name="username"
+                  placeholder="Update username"
+                  [(ngModel)]="formModel.username"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200 bg-white shadow-sm"/>
+                <p class="text-xs text-gray-500">Update server login username</p>
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-lock text-gray-500 mr-2"></i>Password
+                </label>
+                <input
+                  name="password"
+                  placeholder="Enter new password (leave empty to keep current)"
+                  [(ngModel)]="formModel.password"
+                  type="password"
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200 bg-white shadow-sm"/>
+                <p class="text-xs text-gray-500">
+                  <i class="fas fa-info-circle mr-1"></i>Leave empty to keep existing password
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Path Configuration Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-folder text-orange-600"></i>
+              Path Configuration
+            </h4>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                <i class="fas fa-folder-open text-gray-500 mr-2"></i>Remote Path *
+              </label>
+              <input
+                name="remote_path"
+                placeholder="e.g., /var/www/html or /home/user/app"
+                [(ngModel)]="formModel.remote_path"
+                required
+                class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200 bg-white shadow-sm"/>
+              <p class="text-xs text-gray-500">Update target directory path on the remote server</p>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="border-t border-gray-200 pt-6">
+            <div class="flex gap-4">
+              <button
+                type="submit"
+                class="flex-1 bg-gradient-to-r from-orange-600 to-orange-700 text-white py-4 rounded-md 
+                hover:from-orange-700 hover:to-orange-800 transition duration-300 transform hover:scale-[1.02] 
+                focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 shadow-lg flex items-center 
+                justify-center gap-2 font-semibold text-lg">
+                <i class="fas fa-save"></i>
+                Update Connection
+              </button>
+              
+              <!-- <button
+                type="button"
+                (click)="testConnection()"
+                class="px-6 bg-blue-600 text-white py-4 rounded-md hover:bg-blue-700 
+                transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+                shadow-lg flex items-center justify-center gap-2 font-semibold">
+                <i class="fas fa-plug"></i>
+                Test
+              </button> -->
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

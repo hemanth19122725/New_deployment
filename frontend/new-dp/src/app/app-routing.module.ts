@@ -6,6 +6,7 @@ import { AddConnectionComponent } from './add-connection/add-connection.componen
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'add', component: AddConnectionComponent }
+  // { path: 'edit', component: EditConnectionComponent }
 ];
  
 @NgModule({

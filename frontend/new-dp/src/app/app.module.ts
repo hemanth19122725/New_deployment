@@ -8,12 +8,14 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AddConnectionComponent } from './add-connection/add-connection.component';
 import { HomeComponent } from './home/home.component';
+import { EditConnectionComponent } from './edit-connection/edit-connection.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AddConnectionComponent,
     HomeComponent,
+    EditConnectionComponent,
   ],
   imports: [
     BrowserModule,
