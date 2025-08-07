@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Auto Deploy Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
+
+  <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-2xl">
+    <h1 class="text-2xl font-bold mb-4 text-center">SFTP Deployment UI</h1>
+
+    <!-- Connect Form -->
+    <form id="connectForm" class="space-y-4 mb-6">
+      <div class="grid grid-cols-2 gap-4">
+        <input class="border p-2 rounded" type="text" placeholder="Host" name="host" required>
+        <input class="border p-2 rounded" type="text" placeholder="Username" name="username" required>
+        <input class="border p-2 rounded" type="password" placeholder="Password" name="password" required>
+        <input class="border p-2 rounded" type="text" placeholder="Remote Path" name="remote_path" required>
+      </div>
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded" type="submit">Connect</button>
+    </form>
+
+    <!-- File Actions -->
+    <div id="fileActions" class="hidden space-y-4">
+      <!-- Upload -->
+      <form id="uploadForm" class="flex items-center gap-2">
+        <input type="file" name="file" class="border p-2 rounded">
+        <button type="submit" class="bg-green-600 text-white px-3 py-2 rounded">Upload</button>
+      </form>
+
+      <!-- File List -->
+      <div>
+        <button onclick="loadFiles()" class="bg-indigo-600 text-white px-4 py-2 rounded">Refresh Files</button>
+        <ul id="fileList" class="mt-3 space-y-2"></ul>
+      </div>
+
+      <!-- Disconnect -->
+      <button onclick="disconnect()" class="bg-red-600 text-white px-4 py-2 rounded">Disconnect</button>
+    </div>
+  </div>
+
+  <script>
+    const baseURL = "http://localhost:8000";
+
+    document.getElementById("connectForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const res = await fetch(`${baseURL}/connect`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.status === "connected") {
+        document.getElementById("fileActions").classList.remove("hidden");
+        document.getElementById("connectForm").classList.add("hidden");
+        alert("Connected to server!");
+        loadFiles();
+      } else {
+        alert("Connection failed: " + (data.error || "Unknown error"));
+      }
+    });
+
+    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const res = await fetch(`${baseURL}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      alert(data.status === "uploaded" ? "Upload successful!" : "Upload failed");
+      loadFiles();
+    });
+
+    async function loadFiles() {
+      const res = await fetch(`${baseURL}/files`);
+      const data = await res.json();
+      const list = document.getElementById("fileList");
+      list.innerHTML = "";
+      if (data.files) {
+        data.files.forEach(file => {
+          const li = document.createElement("li");
+          li.className = "flex justify-between bg-gray-200 px-3 py-2 rounded";
+
+          li.innerHTML = `
+            <span>${file}</span>
+            <div class="space-x-2">
+              <button onclick="downloadFile('${file}')" class="text-blue-600">Download</button>
+              <button onclick="deleteFile('${file}')" class="text-red-600">Delete</button>
+            </div>
+          `;
+          list.appendChild(li);
+        });
+      } else {
+        alert(data.error || "Failed to load files.");
+      }
+    }
+
+    async function downloadFile(filename) {
+      const res = await fetch(`${baseURL}/download?filename=${filename}`);
+      const data = await res.json();
+      alert(data.status === "downloaded" ? "Downloaded to: " + data.local_path : "Download failed");
+    }
+
+    async function deleteFile(filename) {
+      const res = await fetch(`${baseURL}/delete?filename=${filename}`, { method: "DELETE" });
+      const data = await res.json();
+      alert(data.status === "deleted" ? "Deleted" : "Delete failed");
+      loadFiles();
+    }
+
+    async function disconnect() {
+      const res = await fetch(`${baseURL}/disconnect`, { method: "POST" });
+      const data = await res.json();
+      alert(data.status === "disconnected" ? "Disconnected" : "Disconnect failed");
+      location.reload();
+    }
+  </script>
+</body>
+</html>

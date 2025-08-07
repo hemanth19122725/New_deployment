@@ -1,110 +1,30 @@
-<!-- <div class="p-6 max-w-4xl mx-auto">
-    
-  <form #form="ngForm" (ngSubmit)="onSubmit(form)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-   
-    <input
-      name="name"
-      placeholder="Name"
-      [(ngModel)]="formModel.name"
-      [readonly]="isEditMode"
-      required
-      class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"/>
- 
-    <input
-      name="description"
-      placeholder="Description"
-      [(ngModel)]="formModel.description"
-      required
-      class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"/>
- 
-    <select
-      name="deploy_location"
-      [(ngModel)]="formModel.deploy_location"
-      required
-      class="w-full border border-gray-300 rounded px-4 py-2 bg-white focus:outline-none focus:ring focus:border-blue-400">
-
-      <option value="" disabled selected>Deploy Location</option>
-      <option value="aws">AWS</option>
-      <option value="gcp">GCP</option>
-      <option value="azure">Azure</option>
-      <option value="Linux">Linux</option>
-    </select>
- 
-    <select
-      name="deploy_type"
-      [(ngModel)]="formModel.deploy_type"
-      required
-      class="w-full border border-gray-300 rounded px-4 py-2 bg-white focus:outline-none focus:ring focus:border-blue-400">
-      <option value="" disabled selected>Deploy Type</option>
-      <option value="Frontend">Frontend</option>
-      <option value="Backend">Backend</option>
-    </select>
- 
-    <input
-      name="host"
-      placeholder="Host"
-      [(ngModel)]="formModel.host"
-      required
-      class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"/>
- 
-    <input
-      name="username"
-      placeholder="Username"
-      [(ngModel)]="formModel.username"
-      required
-      class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"/>
- 
-    <input
-      name="password"
-      placeholder="Password"
-      [(ngModel)]="formModel.password"
-      type="password"
-      required
-      class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"/>
- 
-    <input
-      name="remote_path"
-      placeholder="Remote Path"
-      [(ngModel)]="formModel.remote_path"
-      required
-      class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"/>
- 
-    <select
-      name="protocol"
-      [(ngModel)]="formModel.protocol"
-      required
-      class="w-full border border-gray-300 rounded px-4 py-2 bg-white focus:outline-none focus:ring focus:border-blue-400">
-      <option value="" disabled selected>Protocol</option>
-      <option value="sftp">SFTP</option>
-      <option value="scp">SCP</option>
-    </select>
- 
-    <div class="md:col-span-2">
-      <button
-        type="submit"
-        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
-        {{ isEditMode ? 'Update' : 'Save & Connect' }}
-      </button>
-    </div>
- 
-  </form>
-</div> -->
 
 
 <div class="p-6">
   <!-- Header Section -->
+ <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-4 bg-white border-b border-gray-200">
+    <div class="flex">
+    <button
+      routerLink="/"
+      class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700
+      transition focus:outline-none focus:ring-2 focus:ring-gray-500">
+      <i class="fas fa-arrow-left"></i>
+      Back to connections
+  </button>
+  </div>
+ 
+   
+ 
+</div>
+ 
+ 
+ 
   <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4">
     <h2 class="text-3xl font-bold flex items-center gap-2">
       <i class="fas fa-plus-circle text-blue-600"></i>
       <span>{{ isEditMode ? 'Edit Connection' : 'Add New Connection' }}</span>
     </h2>
-    <button
-      routerLink="/"
-      class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 
-      transition focus:outline-none focus:ring-2 focus:ring-gray-500">
-      <i class="fas fa-arrow-left"></i>
-      Back to Connections
-    </button>
+   
   </div>
 
   <!-- Form Card -->
@@ -283,6 +203,7 @@
               <p class="text-xs text-gray-500">Target directory path on the remote server</p>
             </div>
           </div>
+<<<<<<< HEAD
           <div class="mb-4">
   <label for="trigger_script_path" class="block mb-1 text-gray-700 font-medium">Trigger Script Path</label>
   <input
@@ -293,7 +214,47 @@
     [(ngModel)]="formModel.trigger_script_path"
   />
 </div>
+=======
+          <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+        <i class="fas fa-terminal text-gray-500 mr-2"></i>Trigger Script Path
+      </label>
+      <input
+        name="trigger_script_path"
+        placeholder="e.g., /home/user/scripts/deploy.sh or ./build.sh"
+        [(ngModel)]="formModel.trigger_script_path"
+        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+      <p class="text-xs text-gray-500">Path to the script that will be executed after deployment</p>
+    </div>
+ 
+>>>>>>> hemanth
 
+
+<div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+      <!-- Connect/Disconnect buttons in a row on mobile, inline on desktop -->
+      <div class="flex gap-2">
+        <button
+          type="button"
+          (click) ="connect(formModel.name)"
+          class="flex-1 sm:flex-none bg-green-200 text-green-600 px-4 py-2 rounded hover:bg-green-400 hover: text-green-500
+          transition focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center justify-center gap-2">
+          <i class="fas fa-plug"></i>
+          <span class="hidden sm:inline">Connect</span>
+          <span class="sm:hidden text-sm">Connect</span>
+        </button>
+       
+        <button
+          type="button"
+          (click) ="disconnect()"
+          class="flex-1 sm:flex-none bg-red-200 text-red-600 px-4 py-2 rounded hover:bg-red-300 hover:text-red-500
+          transition focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center justify-center gap-2">
+          <i class="fas fa-unlink"></i>
+          <span class="hidden sm:inline">Disconnect</span>
+          <span class="sm:hidden text-sm">Disconnect</span>
+        </button>
+ 
+      </div>
+    </div>
           <!-- Submit Button -->
           <div class="border-t border-gray-200 pt-6">
             <button
@@ -311,4 +272,44 @@
       </div>
     </div>
   </div>
+  <!-- File Operations Section -->
+<div *ngIf="connected" class="mt-10">
+  <h3 class="text-xl font-bold mb-4">📁 Remote File Operations</h3>
+
+  <!-- File Upload -->
+  <div class="mb-4">
+    <label class="block text-sm font-medium mb-2">Upload File</label>
+    <input type="file" (change)="onFileSelected($event)" class="border p-2 rounded w-full" />
+  </div>
+  
+  <!-- File List -->
+  <div class="bg-white shadow border rounded p-4 mt-4">
+    <h4 class="text-md font-semibold mb-3">Remote Files</h4>
+    <ul *ngIf="fileList.length > 0; else noFiles" class="space-y-2">
+      <li *ngFor="let file of fileList" class="flex justify-between items-center border-b pb-2">
+        <span>{{ file }}</span>
+        <div class="flex gap-2">
+          <button (click)="downloadFile(file)" class="px-2 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600">
+            ⬇️ Download
+          </button>
+          <button (click)="deleteFile(file)" class="px-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600">
+            🗑️ Delete
+          </button>
+        </div>
+      </li>
+    </ul>
+    <ng-template #noFiles>
+      <p class="text-gray-500 text-sm">No files found on the server.</p>
+    </ng-template>
+  </div>
+
+  <!-- Logs Section -->
+  <div class="bg-gray-100 rounded p-4 mt-6">
+    <h4 class="text-md font-semibold mb-2">📜 Logs</h4>
+    <ul class="text-sm text-gray-700 space-y-1 max-h-40 overflow-y-auto">
+      <li *ngFor="let log of logs">{{ log }}</li>
+    </ul>
+  </div>
+</div>
+
 </div>

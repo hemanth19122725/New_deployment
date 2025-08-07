@@ -1,69 +1,150 @@
 <div class="p-6">
   <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4">
-  <h2 class="text-3xl font-bold flex items-center gap-2">
-    <span>Existing Deployments</span>
-  </h2>
-  <button
-    routerLink="/add"
-    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 
-    transition focus:outline-none focus:ring-2 focus:ring-blue-500">
-    <i class="fas fa-plus"></i>
-    Add New Deployment
-  </button>
+    <h2 class="text-3xl font-bold flex items-center gap-2">
+      <span>Existing Deployments</span>
+    </h2>
+    <button
+      routerLink="/add"
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700
+      transition focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <i class="fas fa-plus"></i>
+      Add New Deployment
+    </button>
   </div>
-
  
   <div class="overflow-x-auto p-4">
-  <table class="w-full border-collapse bg-white shadow-md rounded-lg">
-    <thead class="bg-blue-50 text-gray-700">
-      <tr>
-        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Name</th>
-        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Description</th>
-        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Location</th>
-        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Type</th>
-        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Protocol</th>
-        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Host</th>
-        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Last Connected</th>
-        <th class="px-4 py-3 text-left font-semibold text-sm uppercase tracking-wider border-b border-gray-200">Action</th>
-      </tr>
-    </thead>
-
-    <tbody class="divide-y divide-gray-200">
-      <tr *ngFor="let conn of connections" class="hover:bg-gray-100 transition duration-200">
-        <td class="px-4 py-4 text-gray-800">{{ conn.name }}</td>
-        <td class="px-4 py-4 text-gray-800">{{ conn.description }}</td>
-        <td class="px-4 py-4 text-gray-600">{{ conn.deploy_location }}</td>
-        <td class="px-4 py-4 text-gray-600">{{ conn.deploy_type }}</td>
-        <td class="px-4 py-4 text-gray-600">{{ conn.protocol }}</td>
-        <td class="px-4 py-4 text-gray-600">{{ conn.host }}</td>
-        <td class="px-4 py-4 text-gray-600">{{ formatTimestamp(conn.connected_at) }}</td>
-        <td class="px-4 py-4 flex space-x-3">
-
-
-
-          <button
-            (click)="edit(conn.name)"
-            class="bg-blue-200 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-400 hover:text-blue-900 transition duration-200 flex 
-            items-center gap-2 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-            <i class="fas fa-edit"></i>
-            Edit
-          </button>
-
-          <button
-          (click)="delete(conn.name)"
-            class="bg-red-200 text-red-500 px-3 py-1 rounded-md hover:bg-red-600 transition duration-200 flex 
-            items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-400"
-            title="Delete this connection">
-            <i class="fas fa-trash"></i>
-            Delete
-          </button>
-
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+    <!-- Show table when there are connections -->
+    <div *ngIf="connections && connections.length > 0">
+      <table class="w-full border-collapse bg-white shadow-md rounded-lg table-fixed">
+        <thead class="bg-blue-50 text-gray-700">
+          <tr>
+            <th class="w-32 px-4 py-3 text-left font-semibold text-sm uppercase border-b border-gray-200">Name</th>
+            <th class="w-40 px-4 py-3 text-left font-semibold text-sm uppercase border-b border-gray-200">Description</th>
+            <th class="w-24 px-4 py-3 text-left font-semibold text-sm uppercase border-b border-gray-200">Location</th>
+            <th class="w-20 px-4 py-3 text-left font-semibold text-sm uppercase border-b border-gray-200">Type</th>
+            <th class="w-20 px-4 py-3 text-left font-semibold text-sm uppercase border-b border-gray-200">Protocol</th>
+            <th class="w-36 px-4 py-3 text-left font-semibold text-sm uppercase border-b border-gray-200">Host</th>
+            <th class="w-32 px-4 py-3 text-left font-semibold text-sm uppercase border-b border-gray-200">Last Connected</th>
+            <th class="w-32 px-4 py-3 text-left font-semibold text-sm uppercase border-b border-gray-200">Action</th>
+          </tr>
+        </thead>
  
-
-  
+        <tbody class="divide-y divide-gray-200">
+          <tr *ngFor="let conn of connections" class="hover:bg-gray-100 transition duration-200">
+            <!-- Name Column with Tooltip -->
+            <td class="px-4 py-4 text-gray-800">
+              <div class="truncate" [title]="conn.name">{{ conn.name }}</div>
+            </td>
+           
+            <!-- Description Column with Tooltip -->
+            <td class="px-4 py-4 text-gray-800">
+              <div class="truncate" [title]="conn.description">{{ conn.description }}</div>
+            </td>
+           
+            <!-- Location Column -->
+            <td class="px-4 py-4 text-gray-600">
+              <div class="truncate" [title]="conn.deploy_location">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                      [ngClass]="{
+                        'bg-orange-100 text-orange-800': conn.deploy_location === 'AWS',
+                        'bg-blue-100 text-blue-800': conn.deploy_location === 'GCP',
+                        'bg-purple-100 text-purple-800': conn.deploy_location === 'Azure',
+                        'bg-gray-100 text-gray-800': conn.deploy_location === 'Linux',
+                        'bg-gray-100 text-yellow-800': conn.deploy_location === 'Custom'
+                      }">
+                  {{ conn.deploy_location }}
+                </span>
+              </div>
+            </td>
+           
+            <!-- Type Column -->
+            <td class="px-4 py-4 text-gray-600">
+              <div class="truncate" [title]="conn.deploy_type">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                      [ngClass]="{
+                        'bg-green-100 text-green-800': conn.deploy_type === 'Frontend',
+                        'bg-indigo-100 text-indigo-800': conn.deploy_type === 'Backend'
+                      }">
+                  {{ conn.deploy_type }}
+                </span>
+              </div>
+            </td>
+           
+            <!-- Protocol Column -->
+            <td class="px-4 py-4 text-gray-600">
+              <div class="truncate" [title]="conn.protocol">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  {{ conn.protocol }}
+                </span>
+              </div>
+            </td>
+           
+            <!-- Host Column with Tooltip -->
+            <td class="px-4 py-4 text-gray-600">
+              <div class="truncate font-mono text-sm" [title]="conn.host">{{ conn.host }}</div>
+            </td>
+           
+            <!-- Last Connected Column -->
+            <td class="px-4 py-4 text-gray-600">
+              <div class="truncate text-sm" [title]="formatTimestamp(conn.connected_at)">
+                {{ formatTimestamp(conn.connected_at) }}
+              </div>
+            </td>
+           
+            <!-- Action Column -->
+            <td class="px-4 py-4">
+              <div class="flex space-x-2">
+                <button
+                  (click)="edit(conn.name)"
+                  class="bg-blue-200 text-blue-600 px-2 py-1 rounded-md hover:bg-blue-400 hover:text-blue-900
+                  transition duration-200 flex
+                  items-center gap-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+                  [title]="'Edit ' + conn.name">
+                  <i class="fas fa-edit text-xs"></i>
+                  <span class="hidden sm:inline">Edit</span>
+                </button>
+ 
+                <button
+                  (click)="delete(conn.name)"
+                  class="bg-red-200 text-red-500 px-2 py-1 rounded-md hover:bg-red-400 hover:text-red-900 transition duration-200 flex
+                  items-center gap-1 focus:outline-none focus:ring-2 focus:ring-red-400 text-sm"
+                  [title]="'Delete ' + conn.name">
+                  <i class="fas fa-trash text-xs"></i>
+                  <span class="hidden sm:inline">Delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+ 
+    <!-- Empty state when no connections -->
+    <div *ngIf="!connections || connections.length === 0"
+         class="bg-gray-100 shadow-md rounded-lg p-12 text-center">
+      <div class="flex flex-col items-center justify-center space-y-4">
+        <!-- Empty state icon -->
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+          <i class="fas fa-server text-gray-400 text-2xl"></i>
+        </div>
+       
+        <!-- Empty state message -->
+        <div class="space-y-2">
+          <h3 class="text-lg font-medium text-gray-900">No Deployments Found</h3>
+          <p class="text-gray-500 max-w-sm mx-auto">
+            You haven't created any deployments yet. Get started by adding your first deployment.
+          </p>
+        </div>
+       
+        <!-- <button
+          routerLink="/add"
+          class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700
+          transition focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center gap-2">
+          <i class="fas fa-plus"></i>
+          Add Your First Deployment
+        </button> -->
+      </div>
+    </div>
+ 
+  </div>
 </div>

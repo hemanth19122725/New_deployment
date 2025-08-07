@@ -197,7 +197,10 @@ def upload(file: UploadFile = File(...)):
         local_path = os.path.join(UPLOAD_DIR, file.filename)
         with open(local_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
+<<<<<<< HEAD
 
+=======
+>>>>>>> hemanth
         remote_path = upload_file(local_path, file.filename)
         return {"status": "uploaded", "remote_path": remote_path}
     except Exception as e:
