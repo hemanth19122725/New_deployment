@@ -39,7 +39,7 @@ export class AddConnectionComponent implements OnInit {
     private http: HttpClient
   ) {}
  
-  ngOnInit(): void {
+ngOnInit(): void {
     const name = this.route.snapshot.queryParamMap.get('name');
     if (name) {
       this.isEditMode = true;
@@ -134,7 +134,7 @@ addLog(message: string) {
 }
 
  
-  onSubmit(form: any) {
+onSubmit(form: any) {
   const formValues = form.value;
   const formData = new FormData();
 
@@ -152,22 +152,87 @@ addLog(message: string) {
     });
   }
 }
- connect(name: string) {
-    this.service.connectExisting(name).subscribe({
+ isConnected: boolean = false;
+  connecting: boolean = false;
+  disconnecting: boolean = false;
+  
+
+  
+  // Updated connect method that works with your existing service
+  connectWithFormName(): void {
+    if (!this.formModel.name) {
+      console.error('Connection name is required');
+      return;
+    }
+
+    if (this.connecting || this.isConnected) {
+      return;
+    }
+
+    this.connecting = true;
+    
+    this.service.connectExisting(this.formModel.name).subscribe({
       next: (res) => {
-        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ✅ Connected to: ${name}`);
+        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ✅ Connected to: ${this.formModel.name}`);
+        this.isConnected = true;
+        this.connecting = false;
+        
+        // Load file list after successful connection
+        this.loadFileList();
       },
       error: (err) => {
-        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ❌ Failed to connect: ${name}`);
+        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ❌ Failed to connect: ${this.formModel.name}`);
+        this.isConnected = false;
+        this.connecting = false;
+        console.error('Connection failed:', err);
       }
     });
   }
+
+  // Updated disconnect method that works with your existing service
   disconnect() {
-    this.service.disconnect().subscribe(() => {
-      this.logs.unshift(`[${new Date().toLocaleTimeString()}] 🔌 Disconnected`);
+    if (!this.isConnected || this.disconnecting) {
+      return;
+    }
+
+    this.disconnecting = true;
+    
+    this.service.disconnect().subscribe({
+      next: () => {
+        this.logs.unshift(`[${new Date().toLocaleTimeString()}] 🔌 Disconnected`);
+        this.isConnected = false;
+        this.disconnecting = false;
+        
+        // Clear file list on disconnect
+        this.fileList = [];
+      },
+      error: (err) => {
+        this.disconnecting = false;
+        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ❌ Failed to disconnect`);
+        console.error('Disconnection failed:', err);
+      }
     });
   }
 
+  // Method to load file list (called after successful connection)
+  loadFileList(): void {
+    if (!this.isConnected) {
+      return;
+    }
+    
+    // Your logic to load files from remote server
+    // For example: this.fileService.getFileList()
+    console.log('Loading file list...');
+    // You might want to call another service method here to get the file list
+  }
+
+  // // Optional: Method to save connection before connecting
+  // saveAndConnect(): void {
+  //   // First save the connection, then connect
+  //   this.onSubmit(this.form).then(() => {
+  //     this.connectWithFormName();
+  //   });
+  // }
  
 }
  
