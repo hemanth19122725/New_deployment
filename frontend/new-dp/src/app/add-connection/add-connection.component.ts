@@ -81,22 +81,33 @@ loadFiles() {
   });
 }
 
+selectedFile: File | null = null;
+
 onFileSelected(event: any) {
   const file = event.target.files[0];
-  if (!file) return;
+  this.selectedFile = file || null;
+}
+
+uploadFile() {
+  if (!this.selectedFile) return;
 
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append('file', this.selectedFile);
 
-  this.http.post(this.baseUrl+'/upload', formData).subscribe({
+  this.http.post(this.baseUrl + '/upload', formData).subscribe({
     next: () => {
-      this.addLog(`✅ Uploaded: ${file.name}`);
+      this.addLog(`✅ Uploaded: ${this.selectedFile?.name}`);
+      this.selectedFile = null;
       this.loadFiles();
     },
     error: (err) => {
       this.addLog(`❌ Upload failed: ${err.error?.error || err.message}`);
     }
   });
+}
+
+removeFile() {
+  this.selectedFile = null;
 }
 
 downloadFile(filename: string) {

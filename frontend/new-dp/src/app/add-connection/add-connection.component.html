@@ -273,10 +273,34 @@
   <h3 class="text-xl font-bold mb-4">📁 Remote File Operations</h3>
 
   <!-- File Upload -->
-  <div class="mb-4">
-    <label class="block text-sm font-medium mb-2">Upload File</label>
-    <input type="file" (change)="onFileSelected($event)" class="border p-2 rounded w-full" />
+ <!-- File Upload -->
+<div class="mb-4">
+  <label class="block text-sm font-medium mb-2">Choose File</label>
+  <input type="file" (change)="onFileSelected($event)" class="border p-2 rounded w-full" [disabled]="selectedFile" />
+</div>
+
+<!-- Selected File Info and Actions -->
+<div *ngIf="selectedFile" class="mb-4 flex items-center gap-4">
+  <div class="text-sm text-gray-700">
+    📄 {{ selectedFile.name }}
   </div>
+
+  <button (click)="uploadFile()" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition">
+    Upload
+  </button>
+
+  <button (click)="removeFile()" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">
+    Remove
+  </button>
+</div>
+
+
+<!-- Upload Button (only show if file is selected) -->
+<div *ngIf="selectedFile" class="mb-4">
+  <button (click)="uploadFile()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+    Upload
+  </button>
+</div>
   
   <!-- File List -->
   <div class="bg-white shadow border rounded p-4 mt-4">
