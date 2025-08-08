@@ -11,7 +11,7 @@ export class HomeComponent implements OnInit {
   connections: any[] = [];
   logs: string[] = [];
  
-  // 👇 Added for View Modal
+  // Added for View Modal
   selectedDeploy: any = null;
  
   constructor(private service: ConnectionService, private router: Router) {}
@@ -88,12 +88,20 @@ export class HomeComponent implements OnInit {
   edit(name: string) {
     this.router.navigate(['/add'], { queryParams: { name } });
   }
+
+  // navigateToEdit(name: string): void {
+  //   this.router.navigate(['/edit', name]);
+  // }
+
+  navigateToDeployment(name: string): void {
+    this.router.navigate(['/deployment', name]);
+  }
  
   formatTimestamp(timestamp: string) {
     return new Date(timestamp).toLocaleString();
   }
  
-  // 👇 Optional if you want to close view via function
+  // Optional if you want to close view via function
   closeView() {
     this.selectedDeploy = null;
   }

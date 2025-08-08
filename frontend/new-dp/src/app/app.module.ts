@@ -9,13 +9,16 @@ import { HttpClientModule } from '@angular/common/http';
 import { AddConnectionComponent } from './add-connection/add-connection.component';
 import { HomeComponent } from './home/home.component';
 import { EditConnectionComponent } from './edit-connection/edit-connection.component';
+import { DeploymentPageComponent } from './deployment-page/deployment-page.component';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 @NgModule({
   declarations: [
     AppComponent,
     AddConnectionComponent,
     HomeComponent,
-    EditConnectionComponent
+    EditConnectionComponent,
+    DeploymentPageComponent
   ],
   imports: [
     BrowserModule,
@@ -26,7 +29,8 @@ import { EditConnectionComponent } from './edit-connection/edit-connection.compo
     CommonModule
   ],
   providers: [
-    provideClientHydration(withEventReplay())
+    provideClientHydration(withEventReplay()),
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
   ],
   bootstrap: [AppComponent]
 })

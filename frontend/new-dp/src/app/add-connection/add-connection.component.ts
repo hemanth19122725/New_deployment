@@ -3,20 +3,21 @@ import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
+// import { ToastrService } from 'ngx-toastr';
+ 
 @Component({
   standalone: false,
   selector: 'app-add-connection',
   templateUrl: './add-connection.component.html',
 })
-
+ 
 export class AddConnectionComponent implements OnInit {
   connected: boolean = false
   isEditMode = false;
   existingName = '';
   fileList: string[] = [];
   logs: string[] = [];
-
+ 
   formModel = {
     name: '',
     description: '',
@@ -29,14 +30,15 @@ export class AddConnectionComponent implements OnInit {
     protocol: '',
     trigger_script_path: '', // ✅ Add this line
   };
-
+ 
   baseUrl: string = "http://localhost:8000";
  
   constructor(
     private service: ConnectionService,
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    // private toastr: ToastrService
   ) {}
  
 ngOnInit(): void {
@@ -55,7 +57,7 @@ ngOnInit(): void {
   form.append('name', name);
   return this.http.post('/connect/existing', form);
 }
-
+ 
   connectToServer(name: string) {
   this.service.connectExisting(name).subscribe({
     next: () => {
@@ -68,7 +70,7 @@ ngOnInit(): void {
     }
   });
 }
-
+ 
 loadFiles() {
   this.service.getFiles().subscribe({
     next: (res) => {
@@ -80,20 +82,20 @@ loadFiles() {
     }
   });
 }
-
+ 
 selectedFile: File | null = null;
-
+ 
 onFileSelected(event: any) {
   const file = event.target.files[0];
   this.selectedFile = file || null;
 }
-
+ 
 uploadFile() {
   if (!this.selectedFile) return;
-
+ 
   const formData = new FormData();
   formData.append('file', this.selectedFile);
-
+ 
   this.http.post(this.baseUrl + '/upload', formData).subscribe({
     next: () => {
       this.addLog(`✅ Uploaded: ${this.selectedFile?.name}`);
@@ -105,11 +107,11 @@ uploadFile() {
     }
   });
 }
-
+ 
 removeFile() {
   this.selectedFile = null;
 }
-
+ 
 downloadFile(filename: string) {
   this.service.downloadFile(filename).subscribe({
     next: (blob) => {
@@ -126,7 +128,7 @@ downloadFile(filename: string) {
     }
   });
 }
-
+ 
 deleteFile(filename: string) {
   this.service.deleteFile(filename).subscribe({
     next: () => {
@@ -135,24 +137,31 @@ deleteFile(filename: string) {
     },
     error: (err) => {
       this.addLog(`❌ Delete failed: ${err.error?.error || err.message}`);
+      // this.toastr.error(`Failed to delete '${filename}'`);
     }
   });
 }
-
+confirmDelete(filename: string) {
+  const confirmed = window.confirm(`Are you sure you want to delete the file '${filename}'?`);
+  if (confirmed) {
+    this.deleteFile(filename);
+  }
+}
+ 
 addLog(message: string) {
   const timestamp = new Date().toLocaleTimeString();
   this.logs.unshift(`[${timestamp}] ${message}`);
 }
-
+ 
  
 onSubmit(form: any) {
   const formValues = form.value;
   const formData = new FormData();
-
+ 
   for (const key in formValues) {
     formData.append(key, formValues[key]);
   }
-
+ 
   if (this.isEditMode) {
     this.service.updateConnection(this.existingName, formData).subscribe(() => {
       this.connectToServer(this.existingName);
@@ -166,28 +175,28 @@ onSubmit(form: any) {
  isConnected: boolean = false;
   connecting: boolean = false;
   disconnecting: boolean = false;
-  
-
-  
+ 
+ 
+ 
   // Updated connect method that works with your existing service
   connectWithFormName(): void {
     if (!this.formModel.name) {
       console.error('Connection name is required');
       return;
     }
-
+ 
     if (this.connecting || this.isConnected) {
       return;
     }
-
+ 
     this.connecting = true;
-    
+   
     this.service.connectExisting(this.formModel.name).subscribe({
       next: (res) => {
         this.logs.unshift(`[${new Date().toLocaleTimeString()}] ✅ Connected to: ${this.formModel.name}`);
         this.isConnected = true;
         this.connecting = false;
-        
+       
         // Load file list after successful connection
         this.loadFileList();
       },
@@ -199,21 +208,21 @@ onSubmit(form: any) {
       }
     });
   }
-
+ 
   // Updated disconnect method that works with your existing service
   disconnect() {
     if (!this.isConnected || this.disconnecting) {
       return;
     }
-
+ 
     this.disconnecting = true;
-    
+   
     this.service.disconnect().subscribe({
       next: () => {
         this.logs.unshift(`[${new Date().toLocaleTimeString()}] 🔌 Disconnected`);
         this.isConnected = false;
         this.disconnecting = false;
-        
+       
         // Clear file list on disconnect
         this.fileList = [];
       },
@@ -224,19 +233,19 @@ onSubmit(form: any) {
       }
     });
   }
-
+ 
   // Method to load file list (called after successful connection)
   loadFileList(): void {
     if (!this.isConnected) {
       return;
     }
-    
+   
     // Your logic to load files from remote server
     // For example: this.fileService.getFileList()
     console.log('Loading file list...');
     // You might want to call another service method here to get the file list
   }
-
+ 
   // // Optional: Method to save connection before connecting
   // saveAndConnect(): void {
   //   // First save the connection, then connect
@@ -246,4 +255,3 @@ onSubmit(form: any) {
   // }
  
 }
- 

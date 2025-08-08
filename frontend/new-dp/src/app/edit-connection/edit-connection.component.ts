@@ -1,20 +1,17 @@
-import { ConnectionService } from '../connection.service';
-import { Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import { ConnectionService } from '../connection.service';
+ 
 @Component({
   selector: 'app-edit-connection',
   standalone: false,
   templateUrl: './edit-connection.component.html',
-  styleUrl: './edit-connection.component.css'
+  styleUrls: ['./edit-connection.component.css']
 })
 export class EditConnectionComponent implements OnInit {
-  isEditMode = true; // Always true for edit component
+  isEditMode = true;
   existingName = '';
-  originalFormModel: any = {}; // Store original data for reset functionality
-
+ 
   formModel = {
     name: '',
     description: '',
@@ -24,7 +21,8 @@ export class EditConnectionComponent implements OnInit {
     username: '',
     password: '',
     remote_path: '',
-    protocol: ''
+    protocol: '',
+    trigger_script_path: ''
   };
  
   constructor(
@@ -35,28 +33,22 @@ export class EditConnectionComponent implements OnInit {
  
   ngOnInit(): void {
     const name = this.route.snapshot.queryParamMap.get('name');
-    console.log('Edit mode - connection name:', name);
-    
+ 
     if (name) {
       this.existingName = name;
       this.loadConnectionData(name);
     } else {
-      // If no name provided, redirect back to home
-      console.error('No connection name provided for editing');
+      alert("No connection name provided for editing");
       this.router.navigate(['/']);
     }
   }
-
+ 
   loadConnectionData(name: string) {
     this.service.getConnectionByName(name).subscribe({
       next: (res) => {
-        console.log('Loaded connection data:', res);
-        // Store original data for reset functionality
-        this.originalFormModel = { ...res };
-        // Set form model (don't include password in form for security)
-        this.formModel = { 
+        this.formModel = {
           ...res,
-          password: '' // Clear password field for security
+          password: '' // Clear password for security
         };
       },
       error: (err) => {
@@ -66,56 +58,36 @@ export class EditConnectionComponent implements OnInit {
       }
     });
   }
-
-  resetForm() {
-    // Reset form to original values
-    this.formModel = { 
-      ...this.originalFormModel,
-      password: '' // Keep password field empty
-    };
-    console.log('Form reset to original values');
-  }
-
-  testConnection() {
-    // Implement test connection functionality
-    console.log('Testing connection...');
-    alert('Test connection functionality - to be implemented');
-    // You can call a test endpoint here
-    // this.service.testConnection(this.existingName).subscribe(...)
-  }
  
   onSubmit(form: any) {
-    console.log('Submitting edit form:', form.value);
-    
+    const confirmed = confirm(`Are you sure you want to update the connection "${this.existingName}"?`);
+    if (!confirmed) return;
+ 
     const formValues = form.value;
     const formData = new FormData();
-    
-    // Always use the existing name (can't be changed)
-    formData.append('name', this.existingName);
+ 
+    formData.append('name', this.existingName); // name is readonly
     formData.append('description', formValues.description);
     formData.append('deploy_location', formValues.deploy_location);
     formData.append('deploy_type', formValues.deploy_type);
     formData.append('host', formValues.host);
     formData.append('username', formValues.username);
-    
-    // Only append password if it's provided (not empty)
+    formData.append('protocol', formValues.protocol);
+    formData.append('remote_path', formValues.remote_path);
+    formData.append('trigger_script_path', formValues.trigger_script_path);
+ 
     if (formValues.password && formValues.password.trim() !== '') {
       formData.append('password', formValues.password);
     }
-    
-    formData.append('remote_path', formValues.remote_path);
-    formData.append('protocol', formValues.protocol);
-
-    // Always update (this is edit component)
+ 
     this.service.updateConnection(this.existingName, formData).subscribe({
-      next: (res) => {
-        console.log('Connection updated successfully:', res);
-        alert(`Connection "${this.existingName}" updated successfully!`);
+      next: () => {
+        alert(`✅ Connection "${this.existingName}" updated successfully!`);
         this.router.navigate(['/']);
       },
       error: (err) => {
         console.error('Failed to update connection:', err);
-        alert(`Failed to update connection "${this.existingName}". Please try again.`);
+        alert(`❌ Failed to update connection "${this.existingName}". Please try again.`);
       }
     });
   }
