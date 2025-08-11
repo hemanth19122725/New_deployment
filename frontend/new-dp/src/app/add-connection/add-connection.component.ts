@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 // import { ToastrService } from 'ngx-toastr';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastService } from '../toast.service';
  
 @Component({
   standalone: false,
@@ -38,7 +40,7 @@ export class AddConnectionComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
-    // private toastr: ToastrService
+    private snackBar: MatSnackBar
   ) {}
  
 ngOnInit(): void {
@@ -52,6 +54,8 @@ ngOnInit(): void {
       });
     }
   }
+
+
   connectExisting(name: string) {
   const form = new FormData();
   form.append('name', name);
@@ -171,8 +175,16 @@ onSubmit(form: any) {
       this.connectToServer(formValues.name);
     });
   }
+
+
+  this.snackBar.open('Saved Successfully', 'Close', {
+      duration: 4000,
+      panelClass: ['toast-success']
+    });
+
 }
- isConnected: boolean = false;
+
+  isConnected: boolean = false;
   connecting: boolean = false;
   disconnecting: boolean = false;
  
@@ -207,6 +219,12 @@ onSubmit(form: any) {
         console.error('Connection failed:', err);
       }
     });
+
+    
+    this.snackBar.open('Successfully Connected to the Host', 'Close', {
+      duration: 4000,
+      panelClass: ['toast-success']
+    });
   }
  
   // Updated disconnect method that works with your existing service
@@ -231,6 +249,11 @@ onSubmit(form: any) {
         this.logs.unshift(`[${new Date().toLocaleTimeString()}] ❌ Failed to disconnect`);
         console.error('Disconnection failed:', err);
       }
+    });
+
+    this.snackBar.open('Disconnected', 'Close', {
+      duration: 4000,
+      panelClass: ['toast-warning']
     });
   }
  

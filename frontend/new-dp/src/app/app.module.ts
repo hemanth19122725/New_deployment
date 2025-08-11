@@ -11,6 +11,8 @@ import { HomeComponent } from './home/home.component';
 import { EditConnectionComponent } from './edit-connection/edit-connection.component';
 import { DeploymentPageComponent } from './deployment-page/deployment-page.component';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import { LocationStrategy, HashLocationStrategy } from '@angular/common';
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
-    CommonModule
+    CommonModule,
+    MatSnackBarModule
   ],
   providers: [
     provideClientHydration(withEventReplay()),

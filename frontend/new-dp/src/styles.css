@@ -4,3 +4,124 @@
 @tailwind components;
 @tailwind utilities; 
 
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.toast-success {
+  background-color: #4caf50; 
+  color: white;
+}
+
+.toast-warning {
+  background-color: #f44336; 
+  color: white;
+}
+
+/* Add this to your global styles.css or component styles */
+
+/* Toast container positioning */
+.toast-top-right {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  left: auto !important;
+  transform: none !important;
+  max-width: 350px !important;
+  min-width: 280px !important;
+}
+
+/* Success toast styling */
+.toast-success {
+  background-color: #10b981 !important;
+  color: white !important;
+  border-left: 4px solid #059669 !important;
+}
+
+.toast-success .mat-mdc-snack-bar-label {
+  color: white !important;
+}
+
+.toast-success .mat-mdc-button {
+  color: white !important;
+}
+
+/* Warning toast styling */
+.toast-warning {
+  background-color: #f59e0b !important;
+  color: white !important;
+  border-left: 4px solid #d97706 !important;
+}
+
+.toast-warning .mat-mdc-snack-bar-label {
+  color: white !important;
+}
+
+.toast-warning .mat-mdc-button {
+  color: white !important;
+}
+
+/* Error toast styling */
+.toast-error {
+  background-color: #ef4444 !important;
+  color: white !important;
+  border-left: 4px solid #dc2626 !important;
+}
+
+.toast-error .mat-mdc-snack-bar-label {
+  color: white !important;
+}
+
+.toast-error .mat-mdc-button {
+  color: white !important;
+}
+
+/* Slide in from right animation */
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Slide out to left animation */
+@keyframes slideOutLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+/* Apply animations to toast container */
+.toast-slide-in {
+  animation: slideInRight 0.4s ease-out forwards !important;
+}
+
+.toast-slide-out {
+  animation: slideOutLeft 0.4s ease-in forwards !important;
+}
+
+/* Additional styling for better appearance */
+.custom-toast {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  font-weight: 500 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .toast-top-right {
+    top: 10px !important;
+    right: 10px !important;
+    left: 10px !important;
+    max-width: none !important;
+  }
+}

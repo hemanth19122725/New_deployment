@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ConnectionService } from '../connection.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastService } from '../toast.service';
 
 @Component({
   selector: 'app-deployment-page',
@@ -44,7 +46,8 @@ export class DeploymentPageComponent implements OnInit{
     private service: ConnectionService,
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private snackBar:MatSnackBar
   ) {}
  
   ngOnInit(): void {
@@ -106,6 +109,11 @@ export class DeploymentPageComponent implements OnInit{
         console.error('Connection failed:', err);
       }
     });
+
+    this.snackBar.open('Successfully Connected to the Host', 'Close', {
+      duration: 4000,
+      panelClass: ['toast-success']
+    });
   }
 
   // Disconnect method
@@ -132,6 +140,10 @@ export class DeploymentPageComponent implements OnInit{
         this.addLog(`❌ Error: ${err.error?.error || err.message}`);
         console.error('Disconnection failed:', err);
       }
+    });
+    this.snackBar.open('Disconnected', 'Close', {
+      duration: 4000,
+      panelClass: ['toast-warning']
     });
   }
 
@@ -322,6 +334,11 @@ export class DeploymentPageComponent implements OnInit{
         }
       });
     }
+
+    this.snackBar.open('Saved Successfully', 'Close', {
+      duration: 4000,
+      panelClass: ['toast-success']
+    });
   }
 
   // Navigate back to home page

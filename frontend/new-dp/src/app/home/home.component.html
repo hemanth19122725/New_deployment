@@ -93,33 +93,34 @@
            
             <!-- Actions Column -->
             <td class="px-4 py-4">
-              <div class="flex space-x-2">
+              <div class="flex space-x-1.5">
                 <!-- Edit Button -->
                 <a
                   [routerLink]="['/edit']"
                   [queryParams]="{ name: conn.name }"
-                  class="bg-blue-200 text-blue-600 px-2 py-1 rounded-md hover:bg-blue-400 hover:text-blue-900
-                  transition duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
-                  [title]="'Edit ' + conn.name">
+                  class="bg-blue-200 text-blue-600 px-1.5 py-1 rounded-md hover:bg-blue-400 hover:text-blue-900
+                  transition duration-200 flex items-center gap-1 focus:outline-none focus:ring-1 focus:ring-blue-400 text-sm"
+                  [title]="'Edit' + conn.name">
                   <i class="fas fa-edit text-xs"></i>
                   <span class="hidden sm:inline">Edit</span>
                 </a>
 
                 <button
                   (click)="navigateToDeployment(conn.name)"
-                  class="bg-green-200 text-green-600 px-1.5 py-1 rounded hover:bg-green-400 hover:text-green-900
+                  class="bg-green-200 text-green-600 px-1.5 py-1 rounded-md hover:bg-green-400 hover:text-green-900
                   transition duration-200 flex
-                  items-center gap-1 focus:outline-none focus:ring-1 focus:ring-green-400 text-xs"
-                  [title]="'Deploy ' + conn.name">
+                  items-center gap-1 focus:outline-none focus:ring-1 focus:ring-green-400 text-sm"
+                  [title]="'Deploy' + conn.name">
                   <i class="fas fa-rocket text-xs"></i>
                   <span class="hidden lg:inline">Deploy</span>
                 </button>
 
                 <button
                   (click)="delete(conn.name)"
-                  class="bg-red-200 text-red-500 px-1.5 py-1 rounded hover:bg-red-400 hover:text-red-900 transition duration-200 flex
-                  items-center gap-1 focus:outline-none focus:ring-1 focus:ring-red-400 text-xs"
-                  [title]="'Delete ' + conn.name">
+                  class="bg-red-200 text-red-600 px-1.5 py-1 rounded-md hover:bg-red-400 hover:text-red-900 
+                  transition duration-200 flex
+                  items-center gap-1 focus:outline-none focus:ring-1 focus:ring-red-400 text-sm"
+                  [title]="'Delete' + conn.name">
                   <i class="fas fa-trash text-xs"></i>
                   <span class="hidden lg:inline">Delete</span>
                 </button>
