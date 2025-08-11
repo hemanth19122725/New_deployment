@@ -8,54 +8,48 @@ export class ToastService {
 
   constructor(private snackBar: MatSnackBar) { }
 
-  private getBaseConfig(): MatSnackBarConfig {
-    return {
-      duration: 4000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: ['toast-top-right', 'toast-slide-in', 'custom-toast']
-    };
-  }
-
   showSuccess(message: string, action: string = 'Close', duration: number = 4000) {
-    const config = {
-      ...this.getBaseConfig(),
+    const config: MatSnackBarConfig = {
       duration,
-      panelClass: [...this.getBaseConfig().panelClass!, 'toast-success']
+      panelClass: ['toast-success', 'toast-slide-in', 'custom-toast']
     };
 
     const snackBarRef = this.snackBar.open(message, action, config);
     
-    // Add slide-out animation before closing
+    // Force positioning after the snackbar is created
     snackBarRef.afterOpened().subscribe(() => {
+      this.forceTopRightPosition();
+      
+      // Add slide-out animation before closing
       setTimeout(() => {
-        const container = document.querySelector('.toast-success');
-        if (container) {
+        const containers = document.querySelectorAll('.toast-success');
+        containers.forEach(container => {
           container.classList.remove('toast-slide-in');
           container.classList.add('toast-slide-out');
-        }
-      }, duration - 500); 
+        });
+      }, duration - 500);
     });
 
     return snackBarRef;
   }
 
   showWarning(message: string, action: string = 'Close', duration: number = 4000) {
-    const config = {
-      ...this.getBaseConfig(),
+    const config: MatSnackBarConfig = {
       duration,
-      panelClass: [...this.getBaseConfig().panelClass!, 'toast-warning']
+      panelClass: ['toast-warning', 'toast-slide-in', 'custom-toast']
     };
 
     const snackBarRef = this.snackBar.open(message, action, config);
     
     snackBarRef.afterOpened().subscribe(() => {
+      this.forceTopRightPosition();
+      
       setTimeout(() => {
-        const container = document.querySelector('.toast-warning');
-        if (container) {
+        const containers = document.querySelectorAll('.toast-warning');
+        containers.forEach(container => {
           container.classList.remove('toast-slide-in');
           container.classList.add('toast-slide-out');
-        }
+        });
       }, duration - 500);
     });
 
@@ -63,21 +57,22 @@ export class ToastService {
   }
 
   showError(message: string, action: string = 'Close', duration: number = 5000) {
-    const config = {
-      ...this.getBaseConfig(),
+    const config: MatSnackBarConfig = {
       duration,
-      panelClass: [...this.getBaseConfig().panelClass!, 'toast-error']
+      panelClass: ['toast-error', 'toast-slide-in', 'custom-toast']
     };
 
     const snackBarRef = this.snackBar.open(message, action, config);
     
     snackBarRef.afterOpened().subscribe(() => {
+      this.forceTopRightPosition();
+      
       setTimeout(() => {
-        const container = document.querySelector('.toast-error');
-        if (container) {
+        const containers = document.querySelectorAll('.toast-error');
+        containers.forEach(container => {
           container.classList.remove('toast-slide-in');
           container.classList.add('toast-slide-out');
-        }
+        });
       }, duration - 500);
     });
 
@@ -85,24 +80,57 @@ export class ToastService {
   }
 
   showInfo(message: string, action: string = 'Close', duration: number = 4000) {
-    const config = {
-      ...this.getBaseConfig(),
+    const config: MatSnackBarConfig = {
       duration,
-      panelClass: [...this.getBaseConfig().panelClass!, 'toast-info']
+      panelClass: ['toast-info', 'toast-slide-in', 'custom-toast']
     };
 
     const snackBarRef = this.snackBar.open(message, action, config);
     
     snackBarRef.afterOpened().subscribe(() => {
+      this.forceTopRightPosition();
+      
       setTimeout(() => {
-        const container = document.querySelector('.toast-info');
-        if (container) {
+        const containers = document.querySelectorAll('.toast-info');
+        containers.forEach(container => {
           container.classList.remove('toast-slide-in');
           container.classList.add('toast-slide-out');
-        }
+        });
       }, duration - 500);
     });
 
     return snackBarRef;
+  }
+
+  private forceTopRightPosition(): void {
+    // Use setTimeout to ensure DOM is ready
+    setTimeout(() => {
+      // Find all overlay panes
+      const overlayPanes = document.querySelectorAll('.cdk-overlay-pane');
+      
+      // Find the one containing our snackbar
+      overlayPanes.forEach((pane: any) => {
+        const snackbarContainer = pane.querySelector('.mat-mdc-snack-bar-container');
+        const hasCustomToast = pane.querySelector('.custom-toast');
+        
+        if (snackbarContainer && hasCustomToast) {
+          // Force the overlay pane to top-right
+          pane.style.position = 'fixed';
+          pane.style.top = '20px';
+          pane.style.right = '20px';
+          pane.style.left = 'auto';
+          pane.style.bottom = 'auto';
+          pane.style.transform = 'none';
+          pane.style.maxWidth = '350px';
+          pane.style.minWidth = '280px';
+          pane.style.zIndex = '9999';
+          
+          // Also style the container
+          snackbarContainer.style.position = 'relative';
+          snackbarContainer.style.transform = 'none';
+          snackbarContainer.style.margin = '0';
+        }
+      });
+    }, 0);
   }
 }

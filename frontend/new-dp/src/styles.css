@@ -1,127 +1,133 @@
-/* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
 @tailwind base;
 @tailwind components;
-@tailwind utilities; 
+@tailwind utilities;
 
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-.toast-success {
-  background-color: #4caf50; 
-  color: white;
+html, body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.toast-warning {
-  background-color: #f44336; 
-  color: white;
-}
-
-/* Add this to your global styles.css or component styles */
-
-/* Toast container positioning */
-.toast-top-right {
+/* Toast positioning (default + overlay) */
+.toast-top-right,
+.cdk-overlay-pane.toast-top-right,
+.toast-positioned,
+.cdk-overlay-pane:has(.toast-success),
+.cdk-overlay-pane:has(.toast-warning), 
+.cdk-overlay-pane:has(.toast-error),
+.cdk-overlay-pane:has(.toast-info),
+.cdk-overlay-pane:has(.custom-toast) {
   position: fixed !important;
   top: 20px !important;
   right: 20px !important;
   left: auto !important;
+  bottom: auto !important;
   transform: none !important;
   max-width: 350px !important;
   min-width: 280px !important;
+  z-index: 9999 !important;
 }
 
-/* Success toast styling */
-.toast-success {
-  background-color: #10b981 !important;
-  color: white !important;
-  border-left: 4px solid #059669 !important;
+.cdk-overlay-container {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  pointer-events: none !important;
+  z-index: 1000 !important;
+}
+.cdk-overlay-pane {
+  pointer-events: auto !important;
 }
 
-.toast-success .mat-mdc-snack-bar-label {
-  color: white !important;
-}
-
-.toast-success .mat-mdc-button {
-  color: white !important;
-}
-
-/* Warning toast styling */
-.toast-warning {
-  background-color: #f59e0b !important;
-  color: white !important;
-  border-left: 4px solid #d97706 !important;
-}
-
-.toast-warning .mat-mdc-snack-bar-label {
-  color: white !important;
-}
-
-.toast-warning .mat-mdc-button {
-  color: white !important;
-}
-
-/* Error toast styling */
-.toast-error {
-  background-color: #ef4444 !important;
-  color: white !important;
-  border-left: 4px solid #dc2626 !important;
-}
-
-.toast-error .mat-mdc-snack-bar-label {
-  color: white !important;
-}
-
-.toast-error .mat-mdc-button {
-  color: white !important;
-}
-
-/* Slide in from right animation */
-@keyframes slideInRight {
-  0% {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-/* Slide out to left animation */
-@keyframes slideOutLeft {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-}
-
-/* Apply animations to toast container */
-.toast-slide-in {
-  animation: slideInRight 0.4s ease-out forwards !important;
-}
-
-.toast-slide-out {
-  animation: slideOutLeft 0.4s ease-in forwards !important;
-}
-
-/* Additional styling for better appearance */
+/* Toast base style */
 .custom-toast {
   border-radius: 8px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   font-weight: 500 !important;
 }
 
-/* Responsive adjustments */
+/* Common toast colors */
+.toast-success {
+  background-color: #10b981 !important;
+  border-left: 4px solid #059669 !important;
+}
+.toast-warning {
+  background-color: #f59e0b !important;
+  border-left: 4px solid #d97706 !important;
+}
+.toast-error {
+  background-color: #ef4444 !important;
+  border-left: 4px solid #dc2626 !important;
+}
+.toast-info {
+  background-color: #3b82f6 !important;
+  border-left: 4px solid #2563eb !important;
+}
+
+/* Shared toast text + button styles */
+.toast-success,
+.toast-warning,
+.toast-error,
+.toast-info {
+  color: white !important;
+}
+.toast-success .mat-mdc-snack-bar-label,
+.toast-warning .mat-mdc-snack-bar-label,
+.toast-error .mat-mdc-snack-bar-label,
+.toast-info .mat-mdc-snack-bar-label {
+  color: white !important;
+}
+.toast-success .mat-mdc-button,
+.toast-warning .mat-mdc-button,
+.toast-error .mat-mdc-button,
+.toast-info .mat-mdc-button {
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+.toast-success .mat-mdc-button:hover,
+.toast-warning .mat-mdc-button:hover,
+.toast-error .mat-mdc-button:hover,
+.toast-info .mat-mdc-button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.toast-warning .mat-mdc-button {
+  font-weight: bold !important;
+}
+
+/* Animations */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOutLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(-100%); opacity: 0; }
+}
+.toast-slide-in {
+  animation: slideInRight 0.4s ease-out forwards !important;
+}
+.toast-slide-out {
+  animation: slideOutLeft 0.4s ease-in forwards !important;
+}
+
+/* Stacking */
+.cdk-overlay-pane + .cdk-overlay-pane:has(.custom-toast) { top: 80px !important; }
+.cdk-overlay-pane + .cdk-overlay-pane + .cdk-overlay-pane:has(.custom-toast) { top: 140px !important; }
+
+/* Responsive */
 @media (max-width: 640px) {
+  .cdk-overlay-pane:has(.custom-toast),
   .toast-top-right {
     top: 10px !important;
     right: 10px !important;
     left: 10px !important;
     max-width: none !important;
   }
+  .cdk-overlay-pane + .cdk-overlay-pane:has(.custom-toast) { top: 70px !important; }
+  .cdk-overlay-pane + .cdk-overlay-pane + .cdk-overlay-pane:has(.custom-toast) { top: 130px !important; }
 }
