@@ -1,0 +1,962 @@
+EDIT.TS
+
+
+
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ConnectionService } from '../connection.service';
+
+@Component({
+  selector: 'app-edit-connection',
+  standalone: false,
+  templateUrl: './edit-connection.component.html',
+  styleUrls: ['./edit-connection.component.css']
+})
+export class EditConnectionComponent implements OnInit {
+  isEditMode = true;
+  existingName = '';
+
+  formModel = {
+    name: '',
+    description: '',
+    deploy_location: '',
+    deploy_type: '',
+    host: '',
+    username: '',
+    password: '',
+    remote_path: '',
+    protocol: '',
+    trigger_script_path: ''
+  };
+
+  constructor(
+    private service: ConnectionService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    const name = this.route.snapshot.queryParamMap.get('name');
+
+    if (name) {
+      this.existingName = name;
+      this.loadConnectionData(name);
+    } else {
+      alert("No connection name provided for editing");
+      this.router.navigate(['/']);
+    }
+  }
+
+  loadConnectionData(name: string) {
+    this.service.getConnectionByName(name).subscribe({
+      next: (res) => {
+        this.formModel = {
+          ...res,
+          password: '' // Clear password for security
+        };
+      },
+      error: (err) => {
+        console.error('Failed to load connection:', err);
+        alert(`Failed to load connection "${name}". Redirecting to home.`);
+        this.router.navigate(['/']);
+      }
+    });
+  }
+
+  onSubmit(form: any) {
+    const confirmed = confirm(`Are you sure you want to update the connection "${this.existingName}"?`);
+    if (!confirmed) return;
+
+    const formValues = form.value;
+    const formData = new FormData();
+
+    formData.append('name', this.existingName); // name is readonly
+    formData.append('description', formValues.description);
+    formData.append('deploy_location', formValues.deploy_location);
+    formData.append('deploy_type', formValues.deploy_type);
+    formData.append('host', formValues.host);
+    formData.append('username', formValues.username);
+    formData.append('protocol', formValues.protocol);
+    formData.append('remote_path', formValues.remote_path);
+    formData.append('trigger_script_path', formValues.trigger_script_path);
+
+    if (formValues.password && formValues.password.trim() !== '') {
+      formData.append('password', formValues.password);
+    }
+
+    this.service.updateConnection(this.existingName, formData).subscribe({
+      next: () => {
+        alert(`✅ Connection "${this.existingName}" updated successfully!`);
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        console.error('Failed to update connection:', err);
+        alert(`❌ Failed to update connection "${this.existingName}". Please try again.`);
+      }
+    });
+  }
+}
+
+
+
+
+EDIT.HTML
+
+
+
+
+<div class="p-6">
+  <!-- Header Section -->
+ <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4">
+  <h2 class="text-3xl font-bold flex items-center gap-2">
+    <i class="fas fa-edit text-blue-600"></i>
+    <span>Edit Connection</span>
+  </h2>
+    <div class="flex">
+    <button
+      routerLink="/"
+      class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700
+      transition focus:outline-none focus:ring-2 focus:ring-gray-500">
+      <i class="fas fa-arrow-left"></i>
+      Back to connections
+  </button>
+  </div>
+  </div>
+
+ 
+  <!-- Form Card -->
+  <div class="max-w-6xl mx-auto">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="bg-blue-50 px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <i class="fas fa-server text-blue-600"></i>
+          Connection Details
+        </h3>
+      </div>
+ 
+      <div class="p-6">
+        <form #form="ngForm" (ngSubmit)="onSubmit(form)" class="space-y-6">
+         
+          <!-- Basic Information Section -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                <i class="fas fa-tag text-gray-500 mr-2"></i>Connection Name
+              </label>
+              <input
+                name="name"
+                placeholder="Enter connection name"
+                [(ngModel)]="formModel.name"
+                [readonly]="isEditMode"
+                required
+                class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+              <p class="text-xs text-gray-500">Unique identifier for this connection</p>
+            </div>
+ 
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                <i class="fas fa-file-alt text-gray-500 mr-2"></i>Description
+              </label>
+              <input
+                name="description"
+                placeholder="Enter connection description"
+                [(ngModel)]="formModel.description"
+                required
+                class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+              <p class="text-xs text-gray-500">Brief description of this connection</p>
+            </div>
+          </div>
+ 
+          <!-- Deployment Configuration Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-cloud text-blue-600"></i>
+              Deployment Configuration
+            </h4>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-map-marker-alt text-gray-500 mr-2"></i>Deploy Location
+                </label>
+                <select
+                  name="deploy_location"
+                  [(ngModel)]="formModel.deploy_location"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
+                  <option value="" disabled selected>Select deployment location</option>
+                  <option value="aws">🟠 AWS (Amazon Web Services)</option>
+                  <option value="gcp">🔵 GCP (Google Cloud Platform)</option>
+                  <option value="azure">🔷 Azure (Microsoft Azure)</option>
+                  <option value="Linux">🐧 Linux Server</option>
+                </select>
+              </div>
+ 
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-layer-group text-gray-500 mr-2"></i>Deploy Type
+                </label>
+                <select
+                  name="deploy_type"
+                  [(ngModel)]="formModel.deploy_type"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
+                  <option value="" disabled selected>Select deployment type</option>
+                  <option value="Frontend">🎨 Frontend Application</option>
+                  <option value="Backend">⚙️ Backend Service</option>
+                </select>
+              </div>
+            </div>
+          </div>
+ 
+          <!-- Connection Details Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-network-wired text-blue-600"></i>
+              Connection Details
+            </h4>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-server text-gray-500 mr-2"></i>Host
+                </label>
+                <input
+                  name="host"
+                  placeholder="e.g., 192.168.1.100 or example.com"
+                  [(ngModel)]="formModel.host"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                <p class="text-xs text-gray-500">IP address or hostname</p>
+              </div>
+ 
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-shield-alt text-gray-500 mr-2"></i>Protocol
+                </label>
+                <select
+                  name="protocol"
+                  [(ngModel)]="formModel.protocol"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
+                  <option value="" disabled selected>Select transfer protocol</option>
+                  <option value="sftp">🔐 SFTP (SSH File Transfer Protocol)</option>
+                  <option value="scp">📁 SCP (Secure Copy Protocol)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+ 
+          <!-- Authentication Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-key text-blue-600"></i>
+              Authentication
+            </h4>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-user text-gray-500 mr-2"></i>Username
+                </label>
+                <input
+                  name="username"
+                  placeholder="Enter username"
+                  [(ngModel)]="formModel.username"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                <p class="text-xs text-gray-500">Account username for authentication</p>
+              </div>
+ 
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-lock text-gray-500 mr-2"></i>Password
+                </label>
+                <input
+                  name="password"
+                  placeholder="Enter password"
+                  [(ngModel)]="formModel.password"
+                  type="password"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                <p class="text-xs text-gray-500">Secure password for authentication</p>
+              </div>
+            </div>
+          </div>
+ 
+          <!-- Path Configuration Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-folder text-blue-600"></i>
+              Path Configuration
+            </h4>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                <i class="fas fa-folder-open text-gray-500 mr-2"></i>Remote Path
+              </label>
+              <input
+                name="remote_path"
+                placeholder="e.g., /var/www/html or /home/user/app"
+                [(ngModel)]="formModel.remote_path"
+                required
+                class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+              <p class="text-xs text-gray-500">Target directory path on the remote server</p>
+            </div>
+          </div>
+          <!-- <div class="mb-4">
+  <label for="trigger_script_path" class="block mb-1 text-gray-700 font-medium">Trigger Script Path</label>
+  <input
+    type="text"
+    id="trigger_script_path"
+    name="trigger_script_path"
+    class="w-full border border-gray-300 rounded px-3 py-2"
+    [(ngModel)]="formModel.trigger_script_path"
+  />
+</div> -->
+    <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+        <i class="fas fa-terminal text-gray-500 mr-2"></i>Trigger Script Path
+      </label>
+      <input
+        name="trigger_script_path"
+        placeholder="e.g., /home/user/scripts/deploy.sh or ./build.sh"
+        [(ngModel)]="formModel.trigger_script_path"
+        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+      <p class="text-xs text-gray-500">Path to the script that will be executed after deployment</p>
+    </div>
+ 
+ 
+ 
+          <!-- Submit Button -->
+          <div class="border-t border-gray-200 pt-6">
+            <button
+              type="submit"
+              class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-md
+              hover:from-blue-700 hover:to-blue-800 transition duration-300 transform hover:scale-[1.02]
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg flex items-center
+              justify-center gap-2 font-semibold text-lg">
+              <!-- <i class="fas fa-{{ isEditMode ? 'save' : 'plug' }}"></i> -->
+              {{ isEditMode ? 'Update' : 'Save' }}
+            </button>
+          </div>
+ 
+        </form>
+      </div>
+    </div>
+  </div>
+ 
+
+
+
+
+
+
+ADD.TS
+
+
+
+
+
+import { ConnectionService } from '../connection.service';
+import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+// import { ToastrService } from 'ngx-toastr';
+ 
+@Component({
+  standalone: false,
+  selector: 'app-add-connection',
+  templateUrl: './add-connection.component.html',
+})
+ 
+export class AddConnectionComponent implements OnInit {
+  connected: boolean = false
+  isEditMode = false;
+  existingName = '';
+  fileList: string[] = [];
+  logs: string[] = [];
+ 
+  formModel = {
+    name: '',
+    description: '',
+    deploy_location: '',
+    deploy_type: '',
+    host: '',
+    username: '',
+    password: '',
+    remote_path: '',
+    protocol: '',
+    trigger_script_path: '', // ✅ Add this line
+  };
+ 
+  baseUrl: string = "http://localhost:8000";
+ 
+  constructor(
+    private service: ConnectionService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient,
+    // private toastr: ToastrService
+  ) {}
+ 
+ngOnInit(): void {
+    const name = this.route.snapshot.queryParamMap.get('name');
+    if (name) {
+      this.isEditMode = true;
+      this.existingName = name;
+ 
+      this.service.getConnectionByName(name).subscribe((res) => {
+        this.formModel = { ...res };
+      });
+    }
+  }
+  connectExisting(name: string) {
+  const form = new FormData();
+  form.append('name', name);
+  return this.http.post('/connect/existing', form);
+}
+ 
+  connectToServer(name: string) {
+  this.service.connectExisting(name).subscribe({
+    next: () => {
+      this.connected = true;
+      this.addLog(`Connected to server: ${name}`);
+      this.loadFiles();
+    },
+    error: (err) => {
+      this.addLog(`❌ Failed to connect: ${err.error?.error || err.message}`);
+    }
+  });
+}
+ 
+loadFiles() {
+  this.service.getFiles().subscribe({
+    next: (res) => {
+      this.fileList = res.files;
+      this.addLog(`Loaded ${res.files.length} files from server`);
+    },
+    error: (err) => {
+      this.addLog(`❌ Failed to load files: ${err.error?.error || err.message}`);
+    }
+  });
+}
+ 
+selectedFile: File | null = null;
+ 
+onFileSelected(event: any) {
+  const file = event.target.files[0];
+  this.selectedFile = file || null;
+}
+ 
+uploadFile() {
+  if (!this.selectedFile) return;
+ 
+  const formData = new FormData();
+  formData.append('file', this.selectedFile);
+ 
+  this.http.post(this.baseUrl + '/upload', formData).subscribe({
+    next: () => {
+      this.addLog(`✅ Uploaded: ${this.selectedFile?.name}`);
+      this.selectedFile = null;
+      this.loadFiles();
+    },
+    error: (err) => {
+      this.addLog(`❌ Upload failed: ${err.error?.error || err.message}`);
+    }
+  });
+}
+ 
+removeFile() {
+  this.selectedFile = null;
+}
+ 
+downloadFile(filename: string) {
+  this.service.downloadFile(filename).subscribe({
+    next: (blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      this.addLog(`⬇️ Downloaded: ${filename}`);
+    },
+    error: (err) => {
+      this.addLog(`❌ Download failed: ${err.error?.error || err.message}`);
+    }
+  });
+}
+ 
+deleteFile(filename: string) {
+  this.service.deleteFile(filename).subscribe({
+    next: () => {
+      this.addLog(`🗑️ Deleted: ${filename}`);
+      this.loadFiles();
+    },
+    error: (err) => {
+      this.addLog(`❌ Delete failed: ${err.error?.error || err.message}`);
+      // this.toastr.error(`Failed to delete '${filename}'`);
+    }
+  });
+}
+confirmDelete(filename: string) {
+  const confirmed = window.confirm(`Are you sure you want to delete the file '${filename}'?`);
+  if (confirmed) {
+    this.deleteFile(filename);
+  }
+}
+ 
+addLog(message: string) {
+  const timestamp = new Date().toLocaleTimeString();
+  this.logs.unshift(`[${timestamp}] ${message}`);
+}
+ 
+ 
+onSubmit(form: any) {
+  const formValues = form.value;
+  const formData = new FormData();
+ 
+  for (const key in formValues) {
+    formData.append(key, formValues[key]);
+  }
+ 
+  if (this.isEditMode) {
+    this.service.updateConnection(this.existingName, formData).subscribe(() => {
+      this.connectToServer(this.existingName);
+    });
+  } else {
+    this.service.addConnection(formData).subscribe(() => {
+      this.connectToServer(formValues.name);
+    });
+  }
+}
+ isConnected: boolean = false;
+  connecting: boolean = false;
+  disconnecting: boolean = false;
+ 
+ 
+ 
+  // Updated connect method that works with your existing service
+  connectWithFormName(): void {
+    if (!this.formModel.name) {
+      console.error('Connection name is required');
+      return;
+    }
+ 
+    if (this.connecting || this.isConnected) {
+      return;
+    }
+ 
+    this.connecting = true;
+   
+    this.service.connectExisting(this.formModel.name).subscribe({
+      next: (res) => {
+        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ✅ Connected to: ${this.formModel.name}`);
+        this.isConnected = true;
+        this.connecting = false;
+       
+        // Load file list after successful connection
+        this.loadFileList();
+      },
+      error: (err) => {
+        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ❌ Failed to connect: ${this.formModel.name}`);
+        this.isConnected = false;
+        this.connecting = false;
+        console.error('Connection failed:', err);
+      }
+    });
+  }
+ 
+  // Updated disconnect method that works with your existing service
+  disconnect() {
+    if (!this.isConnected || this.disconnecting) {
+      return;
+    }
+ 
+    this.disconnecting = true;
+   
+    this.service.disconnect().subscribe({
+      next: () => {
+        this.logs.unshift(`[${new Date().toLocaleTimeString()}] 🔌 Disconnected`);
+        this.isConnected = false;
+        this.disconnecting = false;
+       
+        // Clear file list on disconnect
+        this.fileList = [];
+      },
+      error: (err) => {
+        this.disconnecting = false;
+        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ❌ Failed to disconnect`);
+        console.error('Disconnection failed:', err);
+      }
+    });
+  }
+ 
+  // Method to load file list (called after successful connection)
+  loadFileList(): void {
+    if (!this.isConnected) {
+      return;
+    }
+   
+    // Your logic to load files from remote server
+    // For example: this.fileService.getFileList()
+    console.log('Loading file list...');
+    // You might want to call another service method here to get the file list
+  }
+ 
+  // // Optional: Method to save connection before connecting
+  // saveAndConnect(): void {
+  //   // First save the connection, then connect
+  //   this.onSubmit(this.form).then(() => {
+  //     this.connectWithFormName();
+  //   });
+  // }
+ 
+}
+ 
+ 
+
+
+
+ADD.HTML
+
+
+<div class="p-6">
+  <!-- Header Section -->
+ <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-4 bg-white border-b border-gray-200">
+    <div class="flex">
+    <button
+      routerLink="/"
+      class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700
+      transition focus:outline-none focus:ring-2 focus:ring-gray-500">
+      <i class="fas fa-arrow-left"></i>
+      Back to connections
+  </button>
+  </div>
+ 
+  <!-- Connect and Disconnect button -->
+  <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+      <div class="flex gap-2 ml-auto">
+      <button
+        type="button"
+        (click)="connectWithFormName()"
+        [disabled]="!formModel.name || connecting"
+        class="bg-green-200 text-green-600 px-4 py-2 rounded hover:bg-green-400 hover:text-green-500 transition focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center justify-center gap-2 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed">
+        <i class="fas fa-plug"></i>
+        <span class="hidden sm:inline">{{ connecting ? 'Connecting...' : 'Connect' }}</span>
+      </button>
+     
+      <button
+        type="button"
+        (click)="disconnect()"
+        [disabled]="!isConnected || disconnecting"
+        class="bg-red-200 text-red-600 px-4 py-2 rounded hover:bg-red-300 hover:text-red-500 transition focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center justify-center gap-2 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed">
+        <i class="fas fa-unlink"></i>
+        <span class="hidden sm:inline">{{ disconnecting ? 'Disconnecting...' : 'Disconnect' }}</span>
+      </button>
+    </div>
+ 
+  </div>
+</div>
+   
+ 
+ 
+ 
+ 
+ 
+  <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4">
+    <h2 class="text-3xl font-bold flex items-center gap-2">
+      <i class="fas fa-plus-circle text-blue-600"></i>
+      <span>{{ isEditMode ? 'Edit Connection' : 'Add New Connection' }}</span>
+    </h2>
+   
+  </div>
+ 
+  <!-- Form Card -->
+  <div class="max-w-6xl mx-auto">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="bg-blue-50 px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <i class="fas fa-server text-blue-600"></i>
+          Connection Details
+        </h3>
+      </div>
+ 
+      <div class="p-6">
+        <form #form="ngForm" (ngSubmit)="onSubmit(form)" class="space-y-6">
+         
+          <!-- Basic Information Section -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                <i class="fas fa-tag text-gray-500 mr-2"></i>Connection Name
+              </label>
+              <input
+                name="name"
+                placeholder="Enter connection name"
+                [(ngModel)]="formModel.name"
+                [readonly]="isEditMode"
+                required
+                class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+              <p class="text-xs text-gray-500">Unique identifier for this connection</p>
+            </div>
+ 
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                <i class="fas fa-file-alt text-gray-500 mr-2"></i>Description
+              </label>
+              <input
+                name="description"
+                placeholder="Enter connection description"
+                [(ngModel)]="formModel.description"
+                required
+                class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+              <p class="text-xs text-gray-500">Brief description of this connection</p>
+            </div>
+          </div>
+ 
+          <!-- Deployment Configuration Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-cloud text-blue-600"></i>
+              Deployment Configuration
+            </h4>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-map-marker-alt text-gray-500 mr-2"></i>Deploy Location
+                </label>
+                <select
+                  name="deploy_location"
+                  [(ngModel)]="formModel.deploy_location"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
+                  <option value="" disabled selected>Select deployment location</option>
+                  <option value="aws">🟠 AWS (Amazon Web Services)</option>
+                  <option value="gcp">🔵 GCP (Google Cloud Platform)</option>
+                  <option value="azure">🔷 Azure (Microsoft Azure)</option>
+                  <option value="Linux">🐧 Linux Server</option>
+                </select>
+              </div>
+ 
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-layer-group text-gray-500 mr-2"></i>Deploy Type
+                </label>
+                <select
+                  name="deploy_type"
+                  [(ngModel)]="formModel.deploy_type"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
+                  <option value="" disabled selected>Select deployment type</option>
+                  <option value="Frontend">🎨 Frontend Application</option>
+                  <option value="Backend">⚙️ Backend Service</option>
+                </select>
+              </div>
+            </div>
+          </div>
+ 
+          <!-- Connection Details Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-network-wired text-blue-600"></i>
+              Connection Details
+            </h4>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-server text-gray-500 mr-2"></i>Host
+                </label>
+                <input
+                  name="host"
+                  placeholder="e.g., 192.168.1.100 or example.com"
+                  [(ngModel)]="formModel.host"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                <p class="text-xs text-gray-500">IP address or hostname</p>
+              </div>
+ 
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-shield-alt text-gray-500 mr-2"></i>Protocol
+                </label>
+                <select
+                  name="protocol"
+                  [(ngModel)]="formModel.protocol"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
+                  <option value="" disabled selected>Select transfer protocol</option>
+                  <option value="sftp">🔐 SFTP (SSH File Transfer Protocol)</option>
+                  <option value="scp">📁 SCP (Secure Copy Protocol)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+ 
+          <!-- Authentication Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-key text-blue-600"></i>
+              Authentication
+            </h4>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-user text-gray-500 mr-2"></i>Username
+                </label>
+                <input
+                  name="username"
+                  placeholder="Enter username"
+                  [(ngModel)]="formModel.username"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                <p class="text-xs text-gray-500">Account username for authentication</p>
+              </div>
+ 
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-lock text-gray-500 mr-2"></i>Password
+                </label>
+                <input
+                  name="password"
+                  placeholder="Enter password"
+                  [(ngModel)]="formModel.password"
+                  type="password"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                <p class="text-xs text-gray-500">Secure password for authentication</p>
+              </div>
+            </div>
+          </div>
+ 
+          <!-- Path Configuration Section -->
+          <div class="border-t border-gray-200 pt-6">
+            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-folder text-blue-600"></i>
+              Path Configuration
+            </h4>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                <i class="fas fa-folder-open text-gray-500 mr-2"></i>Remote Path
+              </label>
+              <input
+                name="remote_path"
+                placeholder="e.g., /var/www/html or /home/user/app"
+                [(ngModel)]="formModel.remote_path"
+                required
+                class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+              <p class="text-xs text-gray-500">Target directory path on the remote server</p>
+            </div>
+          </div>
+          <!-- <div class="mb-4">
+  <label for="trigger_script_path" class="block mb-1 text-gray-700 font-medium">Trigger Script Path</label>
+  <input
+    type="text"
+    id="trigger_script_path"
+    name="trigger_script_path"
+    class="w-full border border-gray-300 rounded px-3 py-2"
+    [(ngModel)]="formModel.trigger_script_path"
+  />
+</div> -->
+    <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+        <i class="fas fa-terminal text-gray-500 mr-2"></i>Trigger Script Path
+      </label>
+      <input
+        name="trigger_script_path"
+        placeholder="e.g., /home/user/scripts/deploy.sh or ./build.sh"
+        [(ngModel)]="formModel.trigger_script_path"
+        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+      <p class="text-xs text-gray-500">Path to the script that will be executed after deployment</p>
+    </div>
+ 
+ 
+ 
+          <!-- Submit Button -->
+          <div class="border-t border-gray-200 pt-6">
+            <button
+              type="submit"
+              class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-md
+              hover:from-blue-700 hover:to-blue-800 transition duration-300 transform hover:scale-[1.02]
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg flex items-center
+              justify-center gap-2 font-semibold text-lg">
+              <!-- <i class="fas fa-{{ isEditMode ? 'save' : 'plug' }}"></i> -->
+              {{ isEditMode ? 'Update' : 'Save' }}
+            </button>
+          </div>
+ 
+        </form>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- File Operations Section -->
+<div *ngIf="connected" class="mt-10">
+  <h3 class="text-xl font-bold mb-4">📁 Remote File Operations</h3>
+ 
+  <!-- File Upload -->
+ <!-- File Upload -->
+<div class="mb-4">
+  <label class="block text-sm font-medium mb-2">Choose File</label>
+  <input type="file" (change)="onFileSelected($event)" class="border p-2 rounded w-full" [disabled]="selectedFile" />
+</div>
+ 
+<!-- Selected File Info and Actions -->
+<div *ngIf="selectedFile" class="mb-4 flex items-center gap-4">
+  <div class="text-sm text-gray-700">
+    📄 {{ selectedFile.name }}
+  </div>
+ 
+  <button (click)="uploadFile()" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition">
+    Upload
+  </button>
+ 
+  <button (click)="removeFile()" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">
+    Remove
+  </button>
+</div>
+ 
+ 
+<!-- Upload Button (only show if file is selected) -->
+<div *ngIf="selectedFile" class="mb-4">
+  <button (click)="uploadFile()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+    Upload
+  </button>
+</div>
+ 
+  <!-- File List -->
+  <div class="bg-white shadow border rounded p-4 mt-4">
+    <h4 class="text-md font-semibold mb-3">Remote Files</h4>
+    <ul *ngIf="fileList.length > 0; else noFiles" class="space-y-2">
+      <li *ngFor="let file of fileList" class="flex justify-between items-center border-b pb-2">
+        <span>{{ file }}</span>
+        <div class="flex gap-2">
+          <button (click)="downloadFile(file)" class="px-2 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600">
+            ⬇️ Download
+          </button>
+          <button (click)="confirmDelete(file)" class="px-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600">
+            🗑️ Delete
+          </button>
+ 
+        </div>
+      </li>
+    </ul>
+    <ng-template #noFiles>
+      <p class="text-gray-500 text-sm">No files found on the server.</p>
+    </ng-template>
+  </div>
+ 
+  <!-- Logs Section -->
+  <div class="bg-gray-100 rounded p-4 mt-6">
+    <h4 class="text-md font-semibold mb-2">📜 Logs</h4>
+    <ul class="text-sm text-gray-700 space-y-1 max-h-40 overflow-y-auto">
+      <li *ngFor="let log of logs">{{ log }}</li>
+    </ul>
+  </div>
+</div>
+ 
+</div>
+
+
+
+
+
+

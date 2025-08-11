@@ -67,7 +67,8 @@
       </div>
 
       <div class="p-6">
-        <form #form="ngForm" (ngSubmit)="onSubmit(form)" class="space-y-6">
+        <!-- Note: Form submission removed as fields are now read-only -->
+        <div class="space-y-6">
           
           <!-- Basic Information Section -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -77,11 +78,9 @@
               </label>
               <input
                 name="name"
-                placeholder="Enter connection name"
-                [(ngModel)]="formModel.name"
-                [readonly]="isEditMode"
-                required
-                class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                [value]="formModel.name"
+                readonly
+                class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
               <p class="text-xs text-gray-500">Unique identifier for this connection</p>
             </div>
 
@@ -91,10 +90,9 @@
               </label>
               <input
                 name="description"
-                placeholder="Enter connection description"
-                [(ngModel)]="formModel.description"
-                required
-                class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                [value]="formModel.description"
+                readonly
+                class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
               <p class="text-xs text-gray-500">Brief description of this connection</p>
             </div>
           </div>
@@ -112,10 +110,10 @@
                 </label>
                 <select
                   name="deploy_location"
-                  [(ngModel)]="formModel.deploy_location"
-                  required
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
-                  <option value="" disabled selected>Select deployment location</option>
+                  [value]="formModel.deploy_location"
+                  disabled
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm">
+                  <option value="">Select deployment location</option>
                   <option value="aws">🟠 AWS (Amazon Web Services)</option>
                   <option value="gcp">🔵 GCP (Google Cloud Platform)</option>
                   <option value="azure">🔷 Azure (Microsoft Azure)</option>
@@ -129,10 +127,10 @@
                 </label>
                 <select
                   name="deploy_type"
-                  [(ngModel)]="formModel.deploy_type"
-                  required
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
-                  <option value="" disabled selected>Select deployment type</option>
+                  [value]="formModel.deploy_type"
+                  disabled
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm">
+                  <option value="">Select deployment type</option>
                   <option value="Frontend">🎨 Frontend Application</option>
                   <option value="Backend">⚙️ Backend Service</option>
                 </select>
@@ -153,10 +151,9 @@
                 </label>
                 <input
                   name="host"
-                  placeholder="e.g., 192.168.1.100 or example.com"
-                  [(ngModel)]="formModel.host"
-                  required
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                  [value]="formModel.host"
+                  readonly
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
                 <p class="text-xs text-gray-500">IP address or hostname</p>
               </div>
 
@@ -166,10 +163,10 @@
                 </label>
                 <select
                   name="protocol"
-                  [(ngModel)]="formModel.protocol"
-                  required
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
-                  <option value="" disabled selected>Select transfer protocol</option>
+                  [value]="formModel.protocol"
+                  disabled
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm">
+                  <option value="">Select transfer protocol</option>
                   <option value="sftp">🔐 SFTP (SSH File Transfer Protocol)</option>
                   <option value="scp">📁 SCP (Secure Copy Protocol)</option>
                 </select>
@@ -190,10 +187,9 @@
                 </label>
                 <input
                   name="username"
-                  placeholder="Enter username"
-                  [(ngModel)]="formModel.username"
-                  required
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                  [value]="formModel.username"
+                  readonly
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
                 <p class="text-xs text-gray-500">Account username for authentication</p>
               </div>
 
@@ -203,11 +199,10 @@
                 </label>
                 <input
                   name="password"
-                  placeholder="Enter password"
-                  [(ngModel)]="formModel.password"
+                  value="••••••••••••"
+                  readonly
                   type="password"
-                  required
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
                 <p class="text-xs text-gray-500">Secure password for authentication</p>
               </div>
             </div>
@@ -226,10 +221,9 @@
                 </label>
                 <input
                   name="remote_path"
-                  placeholder="e.g., /var/www/html or /home/user/app"
-                  [(ngModel)]="formModel.remote_path"
-                  required
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                  [value]="formModel.remote_path"
+                  readonly
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
                 <p class="text-xs text-gray-500">Target directory path on the remote server</p>
               </div>
 
@@ -239,15 +233,15 @@
                 </label>
                 <input
                   name="trigger_script_path"
-                  placeholder="e.g., /home/user/scripts/deploy.sh or ./build.sh"
-                  [(ngModel)]="formModel.trigger_script_path"
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                  [value]="formModel.trigger_script_path"
+                  readonly
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
                 <p class="text-xs text-gray-500">Path to the script that will be executed after deployment</p>
               </div>
             </div>
           </div>
 
-        </form>
+        </div>
       </div>
     </div>
   </div>
