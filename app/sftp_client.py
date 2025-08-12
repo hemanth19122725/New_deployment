@@ -76,3 +76,23 @@ def close_connection():
     # Reset state
     for key in state:
         state[key] = None
+
+def run_remote_script(script_path):
+    if not state["ssh_client"]:
+        raise RuntimeError("Not connected to any server.")
+   
+    # Ensure it's an absolute path to avoid command injection
+    if not script_path.startswith("/"):
+        raise ValueError("Trigger script path must be absolute.")
+   
+    stdin, stdout, stderr = state["ssh_client"].exec_command(f"bash {script_path}")
+    exit_status = stdout.channel.recv_exit_status()
+   
+    output = stdout.read().decode()
+    error = stderr.read().decode()
+   
+    return {
+        "exit_status": exit_status,
+        "output": output.strip(),
+        "error": error.strip()
+    }

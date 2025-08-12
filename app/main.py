@@ -10,7 +10,8 @@ import bcrypt
 
 from sftp_client import (
     connect_and_cache, is_connected, list_files,
-    upload_file, download_file, delete_file, close_connection
+    upload_file, download_file, delete_file, close_connection,
+    run_remote_script
 )
 
 app = FastAPI()
@@ -110,6 +111,49 @@ def connect_existing(name: str = Form(...)):
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 
+
+# ----------------------------
+# Trigger remote script manually
+# ----------------------------
+@app.post("/trigger-script/{name}")
+def trigger_script(name: str):
+    record = collection.find_one({"name": name})
+    if not record:
+        raise HTTPException(status_code=404, detail="Connection not found")
+ 
+    # Auto-connect if not connected
+    if not is_connected():
+        try:
+            connect_and_cache(
+                host=record["host"],
+                username=record["username"],
+                password=record["password"],
+                remote_path=record["remote_path"],
+                protocol=record["protocol"]
+            )
+        except Exception as e:
+            return JSONResponse(status_code=500, content={"error": f"Failed to reconnect: {e}"})
+ 
+    try:
+        script_path = record.get("trigger_script_path")
+        if not script_path:
+            raise HTTPException(status_code=400, detail="No trigger script path found for this connection")
+ 
+        script_result = run_remote_script(script_path)
+ 
+        # Save latest script execution details
+        collection.update_one(
+            {"name": name},
+            {"$set": {"last_script_run": script_result, "last_script_triggered_at": datetime.utcnow()}}
+        )
+ 
+        return {
+            "status": "script_executed",
+            "script_result": script_result
+        }
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+    
 
 # ----------------------------
 # Update saved connection by name
@@ -263,4 +307,4 @@ def validate_connection(
         close_connection()  
         return {"valid": True}
     except Exception as e:
-        return {"valid": False, "error": "Wrong credentials. Please try again"}
+        return {"valid": False, "error": "Authentication Failed. Please try again"}
