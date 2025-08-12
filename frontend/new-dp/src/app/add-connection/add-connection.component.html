@@ -1,4 +1,3 @@
-
 <div class="p-6">
   <!-- Header Section -->
  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-4 bg-white border-b border-gray-200">
@@ -41,11 +40,6 @@
   </div>
 </div>
    
- 
-
- 
- 
- 
   <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4">
     <h2 class="text-3xl font-bold flex items-center gap-2">
       <i class="fas fa-plus-circle text-blue-600"></i>
@@ -231,29 +225,17 @@
             </div>
           </div>
 
-          <!-- <div class="mb-4">
-  <label for="trigger_script_path" class="block mb-1 text-gray-700 font-medium">Trigger Script Path</label>
-  <input
-    type="text"
-    id="trigger_script_path"
-    name="trigger_script_path"
-    class="w-full border border-gray-300 rounded px-3 py-2"
-    [(ngModel)]="formModel.trigger_script_path"
-  />
-</div> -->
-    <div class="space-y-2">
-      <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-        <i class="fas fa-terminal text-gray-500 mr-2"></i>Trigger Script Path
-      </label>
-      <input
-        name="trigger_script_path"
-        placeholder="e.g., /home/user/scripts/deploy.sh or ./build.sh"
-        [(ngModel)]="formModel.trigger_script_path"
-        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
-      <p class="text-xs text-gray-500">Path to the script that will be executed after deployment</p>
-    </div>
- 
-
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+              <i class="fas fa-terminal text-gray-500 mr-2"></i>Trigger Script Path
+            </label>
+            <input
+              name="trigger_script_path"
+              placeholder="e.g., /home/user/scripts/deploy.sh or ./build.sh"
+              [(ngModel)]="formModel.trigger_script_path"
+              class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+            <p class="text-xs text-gray-500">Path to the script that will be executed after deployment</p>
+          </div>
 
           <!-- Submit Button -->
           <div class="border-t border-gray-200 pt-6">
@@ -263,7 +245,6 @@
               hover:from-blue-700 hover:to-blue-800 transition duration-300 transform hover:scale-[1.02] 
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg flex items-center 
               justify-center gap-2 font-semibold text-lg">
-              <!-- <i class="fas fa-{{ isEditMode ? 'save' : 'plug' }}"></i> -->
               {{ isEditMode ? 'Update' : 'Save' }}
             </button>
           </div>
@@ -273,118 +254,116 @@
     </div>
   </div>
 
-
-
-  <!-- File Operations Section -->
-<div *ngIf="connected" class="mt-10">
-<div class="bg-white shadow-lg rounded-lg overflow-hidden">
-  <div class="bg-green-50 px-6 py-4 border-b border-gray-200">
-  <h3 class="text-xl font-bold flex items-center gap-2">
-    <i class="fas fa-folder text-green-600"></i>
-        Remote File Operations</h3>
-    </div>
-
-  <div class="p-6 space-y-6">
-<!-- File Upload Section -->
-<div class="border-b border-gray-200 pb-6">
-        <h4 class="text-lg font-semibold mb-4 flex items-center gap-2">
-          <i class="fas fa-upload text-blue-600"></i>
-          File Upload
-        </h4>
-        
-        <div class="space-y-4">
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">Choose File</label>
-            <input 
-              type="file" 
-              (change)="onFileSelected($event)" 
-              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-gray-300 rounded-md" 
-              [disabled]="selectedFile" />
-          </div>
-
-          <!-- Selected File Info and Actions -->
-          <div *ngIf="selectedFile" class="flex items-center gap-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-            <div class="flex items-center gap-2 flex-1">
-              <i class="fas fa-file text-blue-600"></i>
-              <span class="text-sm font-medium text-gray-700">{{ selectedFile.name }}</span>
-              <span class="text-xs text-gray-500">({{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB)</span>
-            </div>
-
-            <button 
-              (click)="uploadFile()" 
-              class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition flex items-center gap-2">
-              <i class="fas fa-upload"></i>
-              Upload
-            </button>
-
-            <button 
-              (click)="removeFile()" 
-              class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 transition">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
+  <!-- File Operations Section - Only show when actually connected -->
+  <div *ngIf="isConnected" class="mt-10">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="bg-green-50 px-6 py-4 border-b border-gray-200">
+        <h3 class="text-xl font-bold flex items-center gap-2">
+          <i class="fas fa-folder text-green-600"></i>
+          Remote File Operations</h3>
       </div>
 
-  <!-- Remote File Section -->
-  <div class="border-b border-gray-200 pb-6">
-        <div class="flex justify-between items-center mb-4">
-          <h4 class="text-lg font-semibold flex items-center gap-2">
-            <i class="fas fa-server text-green-600"></i>
-            Remote Files
+      <div class="p-6 space-y-6">
+        <!-- File Upload Section -->
+        <div class="border-b border-gray-200 pb-6">
+          <h4 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="fas fa-upload text-blue-600"></i>
+            File Upload
           </h4>
-          <button 
-            (click)="loadFiles()" 
-            class="bg-gray-500 text-white px-3 py-2 rounded hover:bg-gray-600 transition flex items-center gap-2 text-sm">
-            <i class="fas fa-sync-alt"></i>
-            Refresh
-          </button>
-        </div>
-        
-        <div class="bg-gray-50 border rounded-lg p-4">
-          <ul *ngIf="fileList.length > 0; else noFiles" class="space-y-3">
-            <li *ngFor="let file of fileList" class="flex justify-between items-center p-3 bg-white border rounded-md hover:bg-gray-50 transition">
-              <div class="flex items-center gap-2">
-                <i class="fas fa-file-alt text-gray-500"></i>
-                <span class="font-medium text-gray-700">{{ file }}</span>
-              </div>
-              <div class="flex gap-2">
-                <button 
-                  (click)="downloadFile(file)" 
-                  class="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition flex items-center gap-1">
-                  <i class="fas fa-download"></i>
-                  Download
-                </button>
-                <button 
-                  (click)="deleteFile(file)" 
-                  class="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition flex items-center gap-1">
-                  <i class="fas fa-trash"></i>
-                  Delete
-                </button>
-              </div>
-            </li>
-          </ul>
-          <ng-template #noFiles>
-            <div class="text-center py-8">
-              <i class="fas fa-folder-open text-4xl text-gray-400 mb-3"></i>
-              <p class="text-gray-500">No files found on the server.</p>
+          
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">Choose File</label>
+              <input 
+                type="file" 
+                (change)="onFileSelected($event)" 
+                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-gray-300 rounded-md" 
+                [disabled]="selectedFile" />
             </div>
-          </ng-template>
-        </div>
-      </div>
 
-  <!-- Logs Section -->
-  <div>
-        <h4 class="text-lg font-semibold mb-4 flex items-center gap-2">
-          <i class="fas fa-terminal text-purple-600"></i>
-          Activity Logs
-        </h4>
-        <div class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm max-h-60 overflow-y-auto">
-          <div *ngIf="logs.length === 0" class="text-gray-500 italic">No activity logs yet...</div>
-          <div *ngFor="let log of logs" class="mb-1">{{ log }}</div>
+            <!-- Selected File Info and Actions -->
+            <div *ngIf="selectedFile" class="flex items-center gap-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+              <div class="flex items-center gap-2 flex-1">
+                <i class="fas fa-file text-blue-600"></i>
+                <span class="text-sm font-medium text-gray-700">{{ selectedFile.name }}</span>
+                <span class="text-xs text-gray-500">({{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB)</span>
+              </div>
+
+              <button 
+                (click)="uploadFile()" 
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition flex items-center gap-2">
+                <i class="fas fa-upload"></i>
+                Upload
+              </button>
+
+              <button 
+                (click)="removeFile()" 
+                class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 transition">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Remote File Section -->
+        <div class="border-b border-gray-200 pb-6">
+          <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold flex items-center gap-2">
+              <i class="fas fa-server text-green-600"></i>
+              Remote Files
+            </h4>
+            <button 
+              (click)="loadFiles()" 
+              class="bg-gray-500 text-white px-3 py-2 rounded hover:bg-gray-600 transition flex items-center gap-2 text-sm">
+              <i class="fas fa-sync-alt"></i>
+              Refresh
+            </button>
+          </div>
+          
+          <div class="bg-gray-50 border rounded-lg p-4">
+            <ul *ngIf="fileList.length > 0; else noFiles" class="space-y-3">
+              <li *ngFor="let file of fileList" class="flex justify-between items-center p-3 bg-white border rounded-md hover:bg-gray-50 transition">
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-file-alt text-gray-500"></i>
+                  <span class="font-medium text-gray-700">{{ file }}</span>
+                </div>
+                <div class="flex gap-2">
+                  <button 
+                    (click)="downloadFile(file)" 
+                    class="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition flex items-center gap-1">
+                    <i class="fas fa-download"></i>
+                    Download
+                  </button>
+                  <button 
+                    (click)="deleteFile(file)" 
+                    class="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition flex items-center gap-1">
+                    <i class="fas fa-trash"></i>
+                    Delete
+                  </button>
+                </div>
+              </li>
+            </ul>
+            <ng-template #noFiles>
+              <div class="text-center py-8">
+                <i class="fas fa-folder-open text-4xl text-gray-400 mb-3"></i>
+                <p class="text-gray-500">No files found on the server.</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Logs Section -->
+        <div>
+          <h4 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="fas fa-terminal text-purple-600"></i>
+            Activity Logs
+          </h4>
+          <div class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm max-h-60 overflow-y-auto">
+            <div *ngIf="logs.length === 0" class="text-gray-500 italic">No activity logs yet...</div>
+            <div *ngFor="let log of logs" class="mb-1">{{ log }}</div>
+          </div>
         </div>
       </div>
-      </div>
-</div>
-</div>
+    </div>
+  </div>
 </div>

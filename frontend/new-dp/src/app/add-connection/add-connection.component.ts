@@ -75,76 +75,143 @@ ngOnInit(): void {
   });
 }
  
-loadFiles() {
-  this.service.getFiles().subscribe({
-    next: (res) => {
-      this.fileList = res.files;
-      this.addLog(`Loaded ${res.files.length} files from server`);
-    },
-    error: (err) => {
-      this.addLog(`❌ Failed to load files: ${err.error?.error || err.message}`);
+loadFiles(): void {
+    if (!this.isConnected) {
+      this.addLog('❌ Not connected to server');
+      return;
     }
-  });
-}
+
+    this.addLog('📁 Loading remote files...');
+    this.service.getFiles().subscribe({
+      next: (res) => {
+        this.fileList = res.files || [];
+        this.addLog(`✅ Loaded ${this.fileList.length} files from server`);
+      },
+      error: (err) => {
+        this.addLog(`❌ Failed to load files: ${err.error?.error || err.message}`);
+        console.error('Failed to load files:', err);
+      }
+    });
+  }
  
 selectedFile: File | null = null;
  
-onFileSelected(event: any) {
-  const file = event.target.files[0];
-  this.selectedFile = file || null;
+onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    this.selectedFile = file || null;
+    
+    if (this.selectedFile) {
+      this.addLog(`📄 Selected file: ${this.selectedFile.name} (${(this.selectedFile.size / 1024 / 1024).toFixed(2)} MB)`);
+    }
 }
+
  
-uploadFile() {
-  if (!this.selectedFile) return;
+// Upload selected file
+  uploadFile(): void {
+    if (!this.selectedFile) {
+      this.addLog('❌ No file selected for upload');
+      return;
+    }
+
+    if (!this.isConnected) {
+      this.addLog('❌ Not connected to server');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', this.selectedFile);
+
+    this.addLog(`⬆️ Uploading: ${this.selectedFile.name}...`);
+
+    this.http.post(this.baseUrl + '/upload', formData).subscribe({
+      next: () => {
+        this.addLog(`✅ Successfully uploaded: ${this.selectedFile?.name}`);
+        this.selectedFile = null;
+        
+        // Reset file input
+        const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+        if (fileInput) {
+          fileInput.value = '';
+        }
+        
+        // Refresh file list
+        this.loadFiles();
+      },
+      error: (err) => {
+        this.addLog(`❌ Upload failed: ${err.error?.error || err.message}`);
+        console.error('Upload failed:', err);
+      }
+    });
+  }
+
  
-  const formData = new FormData();
-  formData.append('file', this.selectedFile);
- 
-  this.http.post(this.baseUrl + '/upload', formData).subscribe({
-    next: () => {
-      this.addLog(`✅ Uploaded: ${this.selectedFile?.name}`);
+// Remove selected file
+  removeFile(): void {
+    if (this.selectedFile) {
+      this.addLog(`🗑️ Removed selected file: ${this.selectedFile.name}`);
       this.selectedFile = null;
-      this.loadFiles();
-    },
-    error: (err) => {
-      this.addLog(`❌ Upload failed: ${err.error?.error || err.message}`);
+      
+      // Reset file input
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = '';
+      }
     }
-  });
-}
+  }
  
-removeFile() {
-  this.selectedFile = null;
-}
- 
-downloadFile(filename: string) {
-  this.service.downloadFile(filename).subscribe({
-    next: (blob) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      a.click();
-      window.URL.revokeObjectURL(url);
-      this.addLog(`⬇️ Downloaded: ${filename}`);
-    },
-    error: (err) => {
-      this.addLog(`❌ Download failed: ${err.error?.error || err.message}`);
+// Download file from server
+  downloadFile(filename: string): void {
+    if (!this.isConnected) {
+      this.addLog('❌ Not connected to server');
+      return;
     }
-  });
-}
+
+    this.addLog(`⬇️ Downloading: ${filename}...`);
+
+    this.service.downloadFile(filename).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.addLog(`✅ Successfully downloaded: ${filename}`);
+      },
+      error: (err) => {
+        this.addLog(`❌ Download failed: ${err.error?.error || err.message}`);
+        console.error('Download failed:', err);
+      }
+    });
+  }
  
-deleteFile(filename: string) {
-  this.service.deleteFile(filename).subscribe({
-    next: () => {
-      this.addLog(`🗑️ Deleted: ${filename}`);
-      this.loadFiles();
-    },
-    error: (err) => {
-      this.addLog(`❌ Delete failed: ${err.error?.error || err.message}`);
-      // this.toastr.error(`Failed to delete '${filename}'`);
+ // Delete file from server
+  deleteFile(filename: string): void {
+    if (!this.isConnected) {
+      this.addLog('❌ Not connected to server');
+      return;
     }
-  });
-}
+
+    if (!confirm(`Are you sure you want to delete "${filename}"?`)) {
+      return;
+    }
+
+    this.addLog(`🗑️ Deleting: ${filename}...`);
+
+    this.service.deleteFile(filename).subscribe({
+      next: () => {
+        this.addLog(`✅ Successfully deleted: ${filename}`);
+        this.loadFiles(); // Refresh file list
+      },
+      error: (err) => {
+        this.addLog(`❌ Delete failed: ${err.error?.error || err.message}`);
+        console.error('Delete failed:', err);
+      }
+    });
+  }
+  
 confirmDelete(filename: string) {
   const confirmed = window.confirm(`Are you sure you want to delete the file '${filename}'?`);
   if (confirmed) {
@@ -157,32 +224,31 @@ addLog(message: string) {
   this.logs.unshift(`[${timestamp}] ${message}`);
 }
  
+ onSubmit(form: any) {
+    const formValues = form.value;
+    const formData = new FormData();
  
-onSubmit(form: any) {
-  const formValues = form.value;
-  const formData = new FormData();
+    for (const key in formValues) {
+      formData.append(key, formValues[key]);
+    }
  
-  for (const key in formValues) {
-    formData.append(key, formValues[key]);
+    if (this.isEditMode) {
+      this.service.updateConnection(this.existingName, formData).subscribe(() => {
+        this.snackBar.open('Connection Updated Successfully', 'Close', {
+          duration: 4000,
+          panelClass: ['toast-success']
+        });
+      });
+    } else {
+      this.service.addConnection(formData).subscribe(() => {
+        this.snackBar.open('Connection Saved Successfully', 'Close', {
+          duration: 4000,
+          panelClass: ['toast-success']
+        });
+      });
+    }
   }
- 
-  if (this.isEditMode) {
-    this.service.updateConnection(this.existingName, formData).subscribe(() => {
-      this.connectToServer(this.existingName);
-    });
-  } else {
-    this.service.addConnection(formData).subscribe(() => {
-      this.connectToServer(formValues.name);
-    });
-  }
 
-
-  this.snackBar.open('Saved Successfully', 'Close', {
-      duration: 4000,
-      panelClass: ['toast-success']
-    });
-
-}
 
   isConnected: boolean = false;
   connecting: boolean = false;
@@ -191,85 +257,99 @@ onSubmit(form: any) {
  
  
   // Updated connect method that works with your existing service
-  connectWithFormName(): void {
+   connectWithFormName(): void {
     if (!this.formModel.name) {
-      console.error('Connection name is required');
+      this.addLog('❌ Connection name is required');
       return;
     }
- 
+
     if (this.connecting || this.isConnected) {
       return;
     }
- 
+
     this.connecting = true;
-   
+    
+    this.addLog(`🔄 Attempting to connect to: ${this.formModel.name}`);
+    
     this.service.connectExisting(this.formModel.name).subscribe({
       next: (res) => {
-        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ✅ Connected to: ${this.formModel.name}`);
+        this.addLog(`✅ Successfully connected to: ${this.formModel.name}`);
         this.isConnected = true;
         this.connecting = false;
-       
-        // Load file list after successful connection
-        this.loadFileList();
+        
+        // Automatically load file list after successful connection
+        this.loadFiles();
       },
       error: (err) => {
-        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ❌ Failed to connect: ${this.formModel.name}`);
+        this.addLog(`❌ Failed to connect to: ${this.formModel.name}`);
+        this.addLog(`❌ Error: ${err.error?.error || err.message}`);
         this.isConnected = false;
         this.connecting = false;
         console.error('Connection failed:', err);
       }
     });
-
-    
     this.snackBar.open('Successfully Connected to the Host', 'Close', {
       duration: 4000,
       panelClass: ['toast-success']
     });
+
   }
  
-  // Updated disconnect method that works with your existing service
-  disconnect() {
+  // Disconnect Method
+   disconnect(): void {
     if (!this.isConnected || this.disconnecting) {
       return;
     }
- 
+
     this.disconnecting = true;
-   
+    this.addLog('🔄 Disconnecting...');
+    
     this.service.disconnect().subscribe({
       next: () => {
-        this.logs.unshift(`[${new Date().toLocaleTimeString()}] 🔌 Disconnected`);
+        this.addLog('🔌 Successfully disconnected');
         this.isConnected = false;
         this.disconnecting = false;
-       
+        
         // Clear file list on disconnect
         this.fileList = [];
-      },
+
+    },
       error: (err) => {
         this.disconnecting = false;
-        this.logs.unshift(`[${new Date().toLocaleTimeString()}] ❌ Failed to disconnect`);
+        this.addLog('❌ Failed to disconnect');
+        this.addLog(`❌ Error: ${err.error?.error || err.message}`);
         console.error('Disconnection failed:', err);
       }
     });
-
     this.snackBar.open('Disconnected', 'Close', {
-      duration: 4000,
-      panelClass: ['toast-warning']
+          duration: 4000,
+          panelClass: ['toast-warning']
     });
+   
   }
  
   // Method to load file list (called after successful connection)
-  loadFileList(): void {
-    if (!this.isConnected) {
-      return;
-    }
+  // loadFileList(): void {
+  //   if (!this.isConnected) {
+  //     this.addLog('❌ Not connected to server');
+  //     return;
+  //   }
+  //   this.addLog('📁 Loading remote files...');
    
-    // Your logic to load files from remote server
-    // For example: this.fileService.getFileList()
-    console.log('Loading file list...');
-    // You might want to call another service method here to get the file list
-  }
+  //   this.service.getFiles().subscribe({
+  //     next: (res) => {
+  //       this.fileList = res.files || [];
+  //       this.addLog(`✅ Loaded ${this.fileList.length} files from server`);
+  //     },
+  //     error: (err) => {
+  //       this.addLog(`❌ Failed to load files: ${err.error?.error || err.message}`);
+  //       console.error('Failed to load files:', err);
+  //     }
+  //   });
+    
+  // }
  
-  // // Optional: Method to save connection before connecting
+  // Optional: Method to save connection before connecting
   // saveAndConnect(): void {
   //   // First save the connection, then connect
   //   this.onSubmit(this.form).then(() => {

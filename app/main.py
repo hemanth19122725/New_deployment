@@ -6,6 +6,7 @@ from pymongo import MongoClient
 from datetime import datetime
 import os
 import shutil
+import bcrypt
 
 from sftp_client import (
     connect_and_cache, is_connected, list_files,
@@ -59,7 +60,7 @@ def connect(
     password: str = Form(...),
     remote_path: str = Form(...),
     protocol: Protocol = Form(...),
-    trigger_script_path: str = Form(...)  # ✅ New field
+    trigger_script_path: str = Form(...) 
 ):
     try:
         # Connect to server
@@ -76,7 +77,7 @@ def connect(
             "password": password,
             "remote_path": remote_path,
             "protocol": protocol.value,
-            "trigger_script_path": trigger_script_path,  # ✅ New field
+            "trigger_script_path": trigger_script_path,  
             "connected_at": datetime.utcnow()
         }
         collection.insert_one(connection_data)
@@ -84,6 +85,9 @@ def connect(
         return {"status": "connected", "protocol": protocol.value, "stored": True}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
+
+
+
 
 # ----------------------------
 # Reconnect using existing name
@@ -105,6 +109,7 @@ def connect_existing(name: str = Form(...)):
         return {"status": "connected", "protocol": record["protocol"], "name": name}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
+
 
 # ----------------------------
 # Update saved connection by name

@@ -90,6 +90,7 @@ export class DeploymentPageComponent implements OnInit{
     }
 
     this.connecting = true;
+    
     this.addLog(`🔄 Attempting to connect to: ${this.formModel.name}`);
     
     this.service.connectExisting(this.formModel.name).subscribe({
@@ -294,52 +295,52 @@ export class DeploymentPageComponent implements OnInit{
   }
 
   // Form submission handler
-  onSubmit(form: any): void {
-    const formValues = form.value;
-    const formData = new FormData();
+  // onSubmit(form: any): void {
+  //   const formValues = form.value;
+  //   const formData = new FormData();
 
-    // Prepare form data
-    for (const key in formValues) {
-      if (formValues[key]) {
-        formData.append(key, formValues[key]);
-      }
-    }
+  //   // Prepare form data
+  //   for (const key in formValues) {
+  //     if (formValues[key]) {
+  //       formData.append(key, formValues[key]);
+  //     }
+  //   }
 
-    if (this.isEditMode) {
-      this.addLog(`🔄 Updating connection: ${this.existingName}`);
-      this.service.updateConnection(this.existingName, formData).subscribe({
-        next: () => {
-          this.addLog(`✅ Connection updated: ${this.existingName}`);
-          // Optionally auto-connect after update
-          // this.connectWithFormName();
-        },
-        error: (err) => {
-          this.addLog(`❌ Failed to update connection: ${err.error?.error || err.message}`);
-          console.error('Update failed:', err);
-        }
-      });
-    } else {
-      this.addLog(`🔄 Creating new connection: ${formValues.name}`);
-      this.service.addConnection(formData).subscribe({
-        next: () => {
-          this.addLog(`✅ Connection created: ${formValues.name}`);
-          this.isEditMode = true;
-          this.existingName = formValues.name;
-          // Optionally auto-connect after creation
-          // this.connectWithFormName();
-        },
-        error: (err) => {
-          this.addLog(`❌ Failed to create connection: ${err.error?.error || err.message}`);
-          console.error('Creation failed:', err);
-        }
-      });
-    }
+  //   if (this.isEditMode) {
+  //     this.addLog(`🔄 Updating connection: ${this.existingName}`);
+  //     this.service.updateConnection(this.existingName, formData).subscribe({
+  //       next: () => {
+  //         this.addLog(`✅ Connection updated: ${this.existingName}`);
+  //         // Optionally auto-connect after update
+  //         // this.connectWithFormName();
+  //       },
+  //       error: (err) => {
+  //         this.addLog(`❌ Failed to update connection: ${err.error?.error || err.message}`);
+  //         console.error('Update failed:', err);
+  //       }
+  //     });
+  //   } else {
+  //     this.addLog(`🔄 Creating new connection: ${formValues.name}`);
+  //     this.service.addConnection(formData).subscribe({
+  //       next: () => {
+  //         this.addLog(`✅ Connection created: ${formValues.name}`);
+  //         this.isEditMode = true;
+  //         this.existingName = formValues.name;
+  //         // Optionally auto-connect after creation
+  //         // this.connectWithFormName();
+  //       },
+  //       error: (err) => {
+  //         this.addLog(`❌ Failed to create connection: ${err.error?.error || err.message}`);
+  //         console.error('Creation failed:', err);
+  //       }
+  //     });
+  //   }
 
-    this.snackBar.open('Saved Successfully', 'Close', {
-      duration: 4000,
-      panelClass: ['toast-success']
-    });
-  }
+  //   this.snackBar.open('Saved Successfully', 'Close', {
+  //     duration: 4000,
+  //     panelClass: ['toast-success']
+  //   });
+  // }
 
   // Navigate back to home page
   goBack(): void {
