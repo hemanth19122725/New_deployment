@@ -227,17 +227,23 @@
                 <p class="text-xs text-gray-500">Target directory path on the remote server</p>
               </div>
 
-              <div class="space-y-2">
-                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                  <i class="fas fa-terminal text-gray-500 mr-2"></i>Trigger Script Path
-                </label>
-                <input
-                  name="trigger_script_path"
-                  [value]="formModel.trigger_script_path"
-                  readonly
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
-                <p class="text-xs text-gray-500">Path to the script that will be executed after deployment</p>
-              </div>
+              <div class="flex items-center space-x-2">
+<input
+    name="trigger_script_path"
+    [value]="formModel.trigger_script_path"
+    readonly
+    class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"
+  />
+ 
+  <!-- Trigger Script Button -->
+<button
+    type="button"
+    (click)="triggerScript()"
+    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow"
+>
+    Trigger
+</button>
+</div>
             </div>
           </div>
 
