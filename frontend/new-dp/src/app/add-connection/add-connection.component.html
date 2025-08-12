@@ -1,51 +1,57 @@
 <div class="p-6">
   <!-- Header Section -->
- <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-4 bg-white border-b border-gray-200">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-4 bg-white border-b border-gray-200">
     <div class="flex">
-    <button
-      routerLink="/"
-      class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700
-      transition focus:outline-none focus:ring-2 focus:ring-gray-500">
-      <i class="fas fa-arrow-left"></i>
-      Back to connections
-  </button>
-  </div>
-
-  <!-- Connect and Disconnect button -->
-  <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-      <div class="flex gap-2 ml-auto">
       <button
-        type="button"
-        (click)="connectWithFormName()"
-        [disabled]="!formModel.name || connecting"
-        class="bg-green-200 text-green-700 px-4 py-2 rounded hover:bg-green-300 hover:text-green-600 
-        transition focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center justify-center 
-        gap-2 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed">
-        <i class="fas fa-plug"></i>
-        <span class="hidden sm:inline">{{ connecting ? 'Connecting...' : 'Connect' }}</span>
-      </button>
-     
-      <button
-        type="button"
-        (click)="disconnect()"
-        [disabled]="!isConnected || disconnecting"
-        class="bg-red-200 text-red-700 px-4 py-2 rounded hover:bg-red-300 hover:text-red-600 
-        transition focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center justify-center 
-        gap-2 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed">
-        <i class="fas fa-unlink"></i>
-        <span class="hidden sm:inline">{{ disconnecting ? 'Disconnecting...' : 'Disconnect' }}</span>
+        routerLink="/"
+        class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700
+        transition focus:outline-none focus:ring-2 focus:ring-gray-500">
+        <i class="fas fa-arrow-left"></i>
+        Back to connections
       </button>
     </div>
- 
+
+    <!-- Connect and Disconnect button -->
+    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+      <div class="flex gap-2 ml-auto">
+        <button
+          type="button"
+          (click)="connectWithFormName()"
+          [disabled]="!formModel.name || connecting"
+          class="bg-green-200 text-green-700 px-4 py-2 rounded hover:bg-green-300 hover:text-green-600 
+          transition focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center justify-center 
+          gap-2 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed">
+          <i class="fas fa-plug"></i>
+          <span class="hidden sm:inline">{{ connecting ? 'Connecting...' : 'Connect' }}</span>
+        </button>
+       
+        <button
+          type="button"
+          (click)="disconnect()"
+          [disabled]="!isConnected || disconnecting"
+          class="bg-red-200 text-red-700 px-4 py-2 rounded hover:bg-red-300 hover:text-red-600 
+          transition focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center justify-center 
+          gap-2 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed">
+          <i class="fas fa-unlink"></i>
+          <span class="hidden sm:inline">{{ disconnecting ? 'Disconnecting...' : 'Disconnect' }}</span>
+        </button>
+      </div>
+    </div>
   </div>
-</div>
+
+  <!-- Connection Status Indicator -->
+  <div *ngIf="isConnected" class="mb-4 p-3 bg-green-100 border border-green-300 rounded-lg">
+    <div class="flex items-center gap-2 text-green-800">
+      <i class="fas fa-check-circle"></i>
+      <span class="font-medium">Connected to {{ formModel.name }}</span>
+    </div>
+  </div>
    
   <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4">
     <h2 class="text-3xl font-bold flex items-center gap-2">
       <i class="fas fa-plus-circle text-blue-600"></i>
       <span>{{ isEditMode ? 'Edit Connection' : 'Add New Connection' }}</span>
     </h2>
-   
   </div>
 
   <!-- Form Card -->
@@ -72,8 +78,8 @@
                 placeholder="Enter connection name"
                 [(ngModel)]="formModel.name"
                 [readonly]="isEditMode"
-                required
-                class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                [class]="isEditMode ? 'w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm' : 'w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm'"
+                required/>
               <p class="text-xs text-gray-500">Unique identifier for this connection</p>
             </div>
 
@@ -107,7 +113,7 @@
                   [(ngModel)]="formModel.deploy_location"
                   required
                   class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
-                  <option value="" disabled selected>Select deployment location</option>
+                  <option value="">Select deployment location</option>
                   <option value="aws">🟠 AWS (Amazon Web Services)</option>
                   <option value="gcp">🔵 GCP (Google Cloud Platform)</option>
                   <option value="azure">🔷 Azure (Microsoft Azure)</option>
@@ -124,7 +130,7 @@
                   [(ngModel)]="formModel.deploy_type"
                   required
                   class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
-                  <option value="" disabled selected>Select deployment type</option>
+                  <option value="">Select deployment type</option>
                   <option value="Frontend">🎨 Frontend Application</option>
                   <option value="Backend">⚙️ Backend Service</option>
                 </select>
@@ -161,7 +167,7 @@
                   [(ngModel)]="formModel.protocol"
                   required
                   class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 shadow-sm">
-                  <option value="" disabled selected>Select transfer protocol</option>
+                  <option value="">Select transfer protocol</option>
                   <option value="sftp">🔐 SFTP (SSH File Transfer Protocol)</option>
                   <option value="scp">📁 SCP (Secure Copy Protocol)</option>
                 </select>
@@ -211,30 +217,32 @@
               <i class="fas fa-folder text-blue-600"></i>
               Path Configuration
             </h4>
-            <div class="space-y-2">
-              <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                <i class="fas fa-folder-open text-gray-500 mr-2"></i>Remote Path
-              </label>
-              <input
-                name="remote_path"
-                placeholder="e.g., /var/www/html or /home/user/app"
-                [(ngModel)]="formModel.remote_path"
-                required
-                class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
-              <p class="text-xs text-gray-500">Target directory path on the remote server</p>
-            </div>
-          </div>
+            <div class="space-y-6">
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-folder-open text-gray-500 mr-2"></i>Remote Path
+                </label>
+                <input
+                  name="remote_path"
+                  placeholder="e.g., /var/www/html or /home/user/app"
+                  [(ngModel)]="formModel.remote_path"
+                  required
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                <p class="text-xs text-gray-500">Target directory path on the remote server</p>
+              </div>
 
-          <div class="space-y-2">
-            <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-              <i class="fas fa-terminal text-gray-500 mr-2"></i>Trigger Script Path
-            </label>
-            <input
-              name="trigger_script_path"
-              placeholder="e.g., /home/user/scripts/deploy.sh or ./build.sh"
-              [(ngModel)]="formModel.trigger_script_path"
-              class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
-            <p class="text-xs text-gray-500">Path to the script that will be executed after deployment</p>
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                  <i class="fas fa-terminal text-gray-500 mr-2"></i>Trigger Script Path
+                </label>
+                <input
+                  name="trigger_script_path"
+                  placeholder="e.g., /home/user/scripts/deploy.sh or ./build.sh"
+                  [(ngModel)]="formModel.trigger_script_path"
+                  class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-white shadow-sm"/>
+                <p class="text-xs text-gray-500">Path to the script that will be executed after deployment</p>
+              </div>
+            </div>
           </div>
 
           <!-- Submit Button -->
@@ -245,7 +253,7 @@
               hover:from-blue-700 hover:to-blue-800 transition duration-300 transform hover:scale-[1.02] 
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg flex items-center 
               justify-center gap-2 font-semibold text-lg">
-              {{ isEditMode ? 'Update' : 'Save' }}
+              Save
             </button>
           </div>
 
@@ -254,13 +262,14 @@
     </div>
   </div>
 
-  <!-- File Operations Section - Only show when actually connected -->
+  <!-- File Operations Section - Shows when connected -->
   <div *ngIf="isConnected" class="mt-10">
     <div class="bg-white shadow-lg rounded-lg overflow-hidden">
       <div class="bg-green-50 px-6 py-4 border-b border-gray-200">
         <h3 class="text-xl font-bold flex items-center gap-2">
           <i class="fas fa-folder text-green-600"></i>
-          Remote File Operations</h3>
+          Remote File Operations
+        </h3>
       </div>
 
       <div class="p-6 space-y-6">
@@ -305,7 +314,7 @@
           </div>
         </div>
 
-        <!-- Remote File Section -->
+        <!-- Remote Files Section -->
         <div class="border-b border-gray-200 pb-6">
           <div class="flex justify-between items-center mb-4">
             <h4 class="text-lg font-semibold flex items-center gap-2">
@@ -366,4 +375,5 @@
       </div>
     </div>
   </div>
+
 </div>

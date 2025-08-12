@@ -30,7 +30,7 @@ export class AddConnectionComponent implements OnInit {
     password: '',
     remote_path: '',
     protocol: '',
-    trigger_script_path: '', // ✅ Add this line
+    trigger_script_path: '',
   };
  
   baseUrl: string = "http://localhost:8000";
@@ -42,6 +42,7 @@ export class AddConnectionComponent implements OnInit {
     private http: HttpClient,
     private snackBar: MatSnackBar
   ) {}
+
  
 ngOnInit(): void {
     const name = this.route.snapshot.queryParamMap.get('name');
@@ -225,29 +226,53 @@ addLog(message: string) {
 }
  
  onSubmit(form: any) {
-    const formValues = form.value;
-    const formData = new FormData();
- 
-    for (const key in formValues) {
-      formData.append(key, formValues[key]);
-    }
- 
-    if (this.isEditMode) {
-      this.service.updateConnection(this.existingName, formData).subscribe(() => {
-        this.snackBar.open('Connection Updated Successfully', 'Close', {
-          duration: 4000,
-          panelClass: ['toast-success']
-        });
-      });
-    } else {
-      this.service.addConnection(formData).subscribe(() => {
-        this.snackBar.open('Connection Saved Successfully', 'Close', {
-          duration: 4000,
-          panelClass: ['toast-success']
-        });
-      });
-    }
+  const formValues = form.value;
+  const formData = new FormData();
+
+  for (const key in formValues) {
+    formData.append(key, formValues[key]);
   }
+
+  // Step 1: Validate before saving
+  this.http.post(this.baseUrl + '/validate', formData).subscribe({
+    next: (res: any) => {
+      if (res.valid) {
+        // Step 2: Save after validation passes
+        if (this.isEditMode) {
+          this.service.updateConnection(this.existingName, formData).subscribe(() => {
+            this.snackBar.open('Connection Updated Successfully', 'Close', {
+              duration: 4000,
+              panelClass: ['toast-success']
+            });
+          });
+        } else {
+          this.service.addConnection(formData).subscribe(() => {
+            this.snackBar.open('Connection Saved Successfully', 'Close', {
+              duration: 4000,
+              panelClass: ['toast-success']
+            });
+          });
+        }
+      } else {
+        // Invalid details
+        this.snackBar.open(
+          res.error || 'Invalid connection details. Please check username, password, host, or remote path.',
+          'Close',
+          { 
+            duration: 4000, 
+            panelClass: ['toast-error'] 
+          }
+        );
+      }
+    },
+    error: (err) => {
+      this.snackBar.open('Error validating connection: ' + (err.error?.error || err.message), 'Close', {
+        duration: 4000,
+        panelClass: ['toast-error']
+      });
+    }
+  });
+}
 
 
   isConnected: boolean = false;
@@ -257,43 +282,59 @@ addLog(message: string) {
  
  
   // Updated connect method that works with your existing service
-   connectWithFormName(): void {
-    if (!this.formModel.name) {
-      this.addLog('❌ Connection name is required');
-      return;
-    }
-
-    if (this.connecting || this.isConnected) {
-      return;
-    }
-
-    this.connecting = true;
-    
-    this.addLog(`🔄 Attempting to connect to: ${this.formModel.name}`);
-    
-    this.service.connectExisting(this.formModel.name).subscribe({
-      next: (res) => {
-        this.addLog(`✅ Successfully connected to: ${this.formModel.name}`);
-        this.isConnected = true;
-        this.connecting = false;
-        
-        // Automatically load file list after successful connection
-        this.loadFiles();
-      },
-      error: (err) => {
-        this.addLog(`❌ Failed to connect to: ${this.formModel.name}`);
-        this.addLog(`❌ Error: ${err.error?.error || err.message}`);
-        this.isConnected = false;
-        this.connecting = false;
-        console.error('Connection failed:', err);
-      }
-    });
-    this.snackBar.open('Successfully Connected to the Host', 'Close', {
+  connectWithFormName(): void {
+  if (!this.formModel.name) {
+    this.addLog('❌ Connection name is required');
+    this.snackBar.open('Connection name is required', 'Close', {
       duration: 4000,
-      panelClass: ['toast-success']
+      panelClass: ['toast-error']
     });
-
+    return;
   }
+
+  if (this.connecting || this.isConnected) {
+    return;
+  }
+
+  this.connecting = true;
+
+  this.addLog(`🔄 Attempting to connect to: ${this.formModel.name}`);
+
+  this.service.connectExisting(this.formModel.name).subscribe({
+    next: (res) => {
+      this.addLog(`✅ Successfully connected to: ${this.formModel.name}`);
+      this.isConnected = true;
+      this.connecting = false;
+
+      // ✅ Success toast
+      this.snackBar.open('Successfully Connected to the Host', 'Close', {
+        duration: 4000,
+        panelClass: ['toast-success']
+      });
+
+      // Automatically load file list
+      this.loadFiles();
+    },
+    error: (err) => {
+      this.addLog(`❌ Failed to connect to: ${this.formModel.name}`);
+      this.addLog(`❌ Error: ${err.error?.error || err.message}`);
+      this.isConnected = false;
+      this.connecting = false;
+      console.error('Connection failed:', err);
+
+      // ❌ Error toast
+      this.snackBar.open(
+        "The Connection is not established. Please Enter the correct details",
+        'Close',
+        {
+          duration: 4000,
+          panelClass: ['toast-error']
+        }
+      );
+    }
+  });
+}
+
  
   // Disconnect Method
    disconnect(): void {

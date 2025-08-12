@@ -246,3 +246,21 @@ def disconnect():
         return {"status": "disconnected"}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
+
+
+@app.post("/validate")
+def validate_connection(
+    name: str = Form(...),
+    host: str = Form(...),
+    username: str = Form(...),
+    password: str = Form(...),
+    remote_path: str = Form(...),
+    protocol: Protocol = Form(...)
+):
+    try:
+        # Try to connect without saving to MongoDB
+        connect_and_cache(host, username, password, remote_path, protocol.value)
+        close_connection()  
+        return {"valid": True}
+    except Exception as e:
+        return {"valid": False, "error": "Wrong credentials. Please try again"}
