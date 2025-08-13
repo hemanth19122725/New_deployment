@@ -1,369 +1,675 @@
-<div class="p-6">
-  <!-- Header Section -->
- <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-4 bg-white border-b border-gray-200">
-    <div class="flex">
-    <button
-      routerLink="/home"
-      class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700
-      transition focus:outline-none focus:ring-2 focus:ring-gray-500">
-      <i class="fas fa-arrow-left"></i>
-      Back to connections
-  </button>
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+  <!-- Animated Background Elements -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-4 -right-4 w-72 h-72 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute -bottom-8 -left-8 w-96 h-96 bg-gradient-to-tr from-cyan-400/20 to-blue-600/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
   </div>
 
-  <!-- Connect and Disconnect button -->
-  <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-      <div class="flex gap-2 ml-auto">
-      <button
-        type="button"
-        (click)="connectWithFormName()"
-        [disabled]="!formModel.name || connecting"
-        class="bg-green-200 text-green-700 px-4 py-2 rounded hover:bg-green-300 hover:text-green-600 
-        transition focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center justify-center 
-        gap-2 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed">
-        <i class="fas fa-plug"></i>
-        <span class="hidden sm:inline">{{ connecting ? 'Connecting...' : 'Connect' }}</span>
-      </button>
-     
-      <button
-        type="button"
-        (click)="disconnect()"
-        [disabled]="!isConnected || disconnecting"
-        class="bg-red-200 text-red-700 px-4 py-2 rounded hover:bg-red-300 hover:text-red-600 
-        transition focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center justify-center 
-        gap-2 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed">
-        <i class="fas fa-unlink"></i>
-        <span class="hidden sm:inline">{{ disconnecting ? 'Disconnecting...' : 'Disconnect' }}</span>
-      </button>
-    </div>
- 
-  </div>
-</div>
-
-  <!-- Connection Status Indicator -->
-  <div *ngIf="isConnected" class="mb-4 p-3 bg-green-100 border border-green-300 rounded-lg">
-    <div class="flex items-center gap-2 text-green-800">
-      <i class="fas fa-check-circle"></i>
-      <span class="font-medium">Connected to {{ formModel.name }}</span>
-    </div>
-  </div>
-   
-  <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4">
-    <h2 class="text-3xl font-bold flex items-center gap-2">
-      <i class="fas fa-plus-circle text-blue-600"></i>
-      <span>Deploy Connection</span>
-    </h2>
-   
-  </div>
-
-  <!-- Form Card -->
-  <div class="max-w-6xl mx-auto">
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-      <div class="bg-blue-50 px-6 py-4 border-b border-gray-200">
-        <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-          <i class="fas fa-server text-blue-600"></i>
-          Connection Details
-        </h3>
-      </div>
-
-      <div class="p-6">
-        <!-- Note: Form submission removed as fields are now read-only -->
-        <div class="space-y-6">
-          
-          <!-- Basic Information Section -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="space-y-2">
-              <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                <i class="fas fa-tag text-gray-500 mr-2"></i>Connection Name
-              </label>
-              <input
-                name="name"
-                [value]="formModel.name"
-                readonly
-                class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
-              <p class="text-xs text-gray-500">Unique identifier for this connection</p>
-            </div>
-
-            <div class="space-y-2">
-              <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                <i class="fas fa-file-alt text-gray-500 mr-2"></i>Description
-              </label>
-              <input
-                name="description"
-                [value]="formModel.description"
-                readonly
-                class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
-              <p class="text-xs text-gray-500">Brief description of this connection</p>
-            </div>
+  <div class="relative p-4">
+    <!-- Enhanced Header Section -->
+    <div class="max-w-7xl mx-auto mb-8">
+      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+        <div class="flex items-center gap-4">
+          <div class="p-3 bg-white rounded-xl shadow-md">
+            <i class="fas fa-rocket text-blue-600 text-xl"></i>
           </div>
-
-          <!-- Deployment Configuration Section -->
-          <div class="border-t border-gray-200 pt-6">
-            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <i class="fas fa-cloud text-blue-600"></i>
-              Deployment Configuration
-            </h4>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="space-y-2">
-                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                  <i class="fas fa-map-marker-alt text-gray-500 mr-2"></i>Deploy Location
-                </label>
-                <select
-                  name="deploy_location"
-                  [value]="formModel.deploy_location"
-                  disabled
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm">
-                  <option value="">Select deployment location</option>
-                  <option value="aws">🟠 AWS (Amazon Web Services)</option>
-                  <option value="gcp">🔵 GCP (Google Cloud Platform)</option>
-                  <option value="azure">🔷 Azure (Microsoft Azure)</option>
-                  <option value="Linux">🐧 Linux Server</option>
-                </select>
-              </div>
-
-              <div class="space-y-2">
-                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                  <i class="fas fa-layer-group text-gray-500 mr-2"></i>Deploy Type
-                </label>
-                <select
-                  name="deploy_type"
-                  [value]="formModel.deploy_type"
-                  disabled
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm">
-                  <option value="">Select deployment type</option>
-                  <option value="Frontend">🎨 Frontend Application</option>
-                  <option value="Backend">⚙️ Backend Service</option>
-                </select>
-              </div>
-            </div>
+          <div>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-800 via-blue-800 to-indigo-900 bg-clip-text text-transparent">
+              Deploy Connection
+            </h1>
+            <p class="text-gray-600">Manage and deploy your connection</p>
           </div>
-
-          <!-- Connection Details Section -->
-          <div class="border-t border-gray-200 pt-6">
-            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <i class="fas fa-network-wired text-blue-600"></i>
-              Connection Details
-            </h4>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="space-y-2">
-                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                  <i class="fas fa-server text-gray-500 mr-2"></i>Host
-                </label>
-                <input
-                  name="host"
-                  [value]="formModel.host"
-                  readonly
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
-                <p class="text-xs text-gray-500">IP address or hostname</p>
-              </div>
-
-              <div class="space-y-2">
-                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                  <i class="fas fa-shield-alt text-gray-500 mr-2"></i>Protocol
-                </label>
-                <select
-                  name="protocol"
-                  [value]="formModel.protocol"
-                  disabled
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm">
-                  <option value="">Select transfer protocol</option>
-                  <option value="sftp">🔐 SFTP (SSH File Transfer Protocol)</option>
-                  <option value="scp">📁 SCP (Secure Copy Protocol)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Authentication Section -->
-          <div class="border-t border-gray-200 pt-6">
-            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <i class="fas fa-key text-blue-600"></i>
-              Authentication
-            </h4>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="space-y-2">
-                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                  <i class="fas fa-user text-gray-500 mr-2"></i>Username
-                </label>
-                <input
-                  name="username"
-                  [value]="formModel.username"
-                  readonly
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
-                <p class="text-xs text-gray-500">Account username for authentication</p>
-              </div>
-
-              <div class="space-y-2">
-                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                  <i class="fas fa-lock text-gray-500 mr-2"></i>Password
-                </label>
-                <input
-                  name="password"
-                  value="••••••••••••"
-                  readonly
-                  type="password"
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
-                <p class="text-xs text-gray-500">Secure password for authentication</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Path Configuration Section -->
-          <div class="border-t border-gray-200 pt-6">
-            <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <i class="fas fa-folder text-blue-600"></i>
-              Path Configuration
-            </h4>
-            <div class="space-y-6">
-              <div class="space-y-2">
-                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                  <i class="fas fa-folder-open text-gray-500 mr-2"></i>Remote Path
-                </label>
-                <input
-                  name="remote_path"
-                  [value]="formModel.remote_path"
-                  readonly
-                  class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"/>
-                <p class="text-xs text-gray-500">Target directory path on the remote server</p>
-              </div>
-
-              <div class="flex items-center space-x-2">
-<input
-    name="trigger_script_path"
-    [value]="formModel.trigger_script_path"
-    readonly
-    class="w-full border border-gray-300 rounded-md px-4 py-3 bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm"
-  />
- 
-  <!-- Trigger Script Button -->
-<button
-    type="button"
-    (click)="triggerScript()"
-    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow"
->
-    Trigger
-</button>
-</div>
-            </div>
-          </div>
-
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- File Operations Section - Now shows when isConnected is true -->
-<div *ngIf="isConnected" class="mt-10">
-  <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-    <div class="bg-green-50 px-6 py-4 border-b border-gray-200">
-      <h3 class="text-xl font-bold flex items-center gap-2">
-        <i class="fas fa-folder text-green-600"></i>
-        Remote File Operations
-      </h3>
-    </div>
-
-    <div class="p-6 space-y-6">
-      <!-- File Upload Section -->
-      <div class="border-b border-gray-200 pb-6">
-        <h4 class="text-lg font-semibold mb-4 flex items-center gap-2">
-          <i class="fas fa-upload text-blue-600"></i>
-          File Upload
-        </h4>
         
-        <div class="space-y-4">
-          <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">Choose File</label>
-            <input 
-              type="file" 
-              (change)="onFileSelected($event)" 
-              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-gray-300 rounded-md" 
-              [disabled]="selectedFile" />
-          </div>
-
-          <!-- Selected File Info and Actions -->
-          <div *ngIf="selectedFile" class="flex items-center gap-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-            <div class="flex items-center gap-2 flex-1">
-              <i class="fas fa-file text-blue-600"></i>
-              <span class="text-sm font-medium text-gray-700">{{ selectedFile.name }}</span>
-              <span class="text-xs text-gray-500">({{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB)</span>
+        <!-- Connection Control Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+          <button
+            routerLink="/home"
+            class="group relative px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white 
+            rounded-2xl hover:from-gray-700 hover:to-gray-800 transform hover:scale-105 transition-all 
+            duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-gray-300">
+            <div class="flex items-center gap-3">
+              <i class="fas fa-arrow-left"></i>
+              <span class="font-semibold">Back to Connections</span>
             </div>
-
-            <button 
-              (click)="uploadFile()" 
-              class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition flex items-center gap-2">
-              <i class="fas fa-upload"></i>
-              Upload
-            </button>
-
-            <button 
-              (click)="removeFile()" 
-              class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 transition">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Remote Files Section -->
-      <div class="border-b border-gray-200 pb-6">
-        <div class="flex justify-between items-center mb-4">
-          <h4 class="text-lg font-semibold flex items-center gap-2">
-            <i class="fas fa-server text-green-600"></i>
-            Remote Files
-          </h4>
-          <button 
-            (click)="loadFiles()" 
-            class="bg-gray-500 text-white px-3 py-2 rounded hover:bg-gray-600 transition flex items-center gap-2 text-sm">
-            <i class="fas fa-sync-alt"></i>
-            Refresh
           </button>
-        </div>
-        
-        <div class="bg-gray-50 border rounded-lg p-4">
-          <ul *ngIf="fileList.length > 0; else noFiles" class="space-y-3">
-            <li *ngFor="let file of fileList" class="flex justify-between items-center p-3 bg-white border rounded-md hover:bg-gray-50 transition">
+
+          <div class="flex gap-3">
+            <button
+              type="button"
+              (click)="connectWithFormName()"
+              [disabled]="!formModel.name || connecting"
+              class="group relative px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white 
+              rounded-2xl hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all 
+              duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-green-300
+              disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none">
               <div class="flex items-center gap-2">
-                <i class="fas fa-file-alt text-gray-500"></i>
-                <span class="font-medium text-gray-700">{{ file }}</span>
+                <i class="fas fa-plug"></i>
+                <span class="font-semibold">{{ connecting ? 'Connecting...' : 'Connect' }}</span>
               </div>
-              <div class="flex gap-2">
-                <button 
-                  (click)="downloadFile(file)" 
-                  class="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition flex items-center gap-1">
-                  <i class="fas fa-download"></i>
-                  Download
-                </button>
-                <button 
-                  (click)="deleteFile(file)" 
-                  class="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition flex items-center gap-1">
-                  <i class="fas fa-trash"></i>
-                  Delete
-                </button>
+            </button>
+           
+            <button
+              type="button"
+              (click)="disconnect()"
+              [disabled]="!isConnected || disconnecting"
+              class="group relative px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white 
+              rounded-2xl hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all 
+              duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-red-300
+              disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-unlink"></i>
+                <span class="font-semibold">{{ disconnecting ? 'Disconnecting...' : 'Disconnect' }}</span>
               </div>
-            </li>
-          </ul>
-          <ng-template #noFiles>
-            <div class="text-center py-8">
-              <i class="fas fa-folder-open text-4xl text-gray-400 mb-3"></i>
-              <p class="text-gray-500">No files found on the server.</p>
-            </div>
-          </ng-template>
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Logs Section -->
-      <div>
-        <h4 class="text-lg font-semibold mb-4 flex items-center gap-2">
-          <i class="fas fa-terminal text-purple-600"></i>
-          Activity Logs
-        </h4>
-        <div class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm max-h-60 overflow-y-auto">
-          <div *ngIf="logs.length === 0" class="text-gray-500 italic">No activity logs yet...</div>
-          <div *ngFor="let log of logs" class="mb-1">{{ log }}</div>
+      <!-- Enhanced Connection Status Indicator -->
+      <div *ngIf="isConnected" class="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 rounded-3xl shadow-lg backdrop-blur-sm">
+        <div class="flex items-center gap-3 text-green-800">
+          <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+            <i class="fas fa-check-circle text-white"></i>
+          </div>
+          <div>
+            <div class="font-bold text-lg">Successfully Connected!</div>
+            <div class="text-sm text-green-600">Connected to {{ formModel.name }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Form Card -->
+    <div class="max-w-7xl mx-auto mb-8">
+      <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+        <!-- Card Header -->
+        <div class="bg-gradient-to-r from-gray-50 to-blue-50/50 px-8 py-6 border-b border-gray-200/50">
+          <h3 class="text-xl font-bold text-gray-800 flex items-center gap-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+              <i class="fas fa-server text-white text-sm"></i>
+            </div>
+            Connection Details
+          </h3>
+        </div>
+
+        <div class="p-8">
+          <div class="space-y-8">
+            
+            <!-- Basic Information Section -->
+            <div class="space-y-6">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                  <i class="fas fa-info text-white text-xs"></i>
+                </div>
+                <h4 class="text-lg font-semibold text-gray-800">Basic Information</h4>
+                <div class="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+              </div>
+              
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="space-y-3">
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-tag text-blue-600"></i>
+                      Connection Name
+                    </div>
+                  </label>
+                  <input
+                    name="name"
+                    [value]="formModel.name"
+                    readonly
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-4 bg-gray-100 text-gray-700 cursor-not-allowed shadow-lg backdrop-blur-sm"/>
+                  <p class="text-xs text-gray-500 flex items-center gap-2">
+                    <i class="fas fa-lightbulb text-gray-400"></i>
+                    Unique identifier for this connection
+                  </p>
+                </div>
+
+                <div class="space-y-3">
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-file-alt text-blue-600"></i>
+                      Description
+                    </div>
+                  </label>
+                  <input
+                    name="description"
+                    [value]="formModel.description"
+                    readonly
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-4 bg-gray-100 text-gray-700 cursor-not-allowed shadow-lg backdrop-blur-sm"/>
+                  <p class="text-xs text-gray-500 flex items-center gap-2">
+                    <i class="fas fa-lightbulb text-gray-400"></i>
+                    Brief description of this connection
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Deployment Configuration Section -->
+            <div class="space-y-6">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                  <i class="fas fa-cloud text-white text-xs"></i>
+                </div>
+                <h4 class="text-lg font-semibold text-gray-800">Deployment Configuration</h4>
+                <div class="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+              </div>
+              
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="space-y-3">
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-map-marker-alt text-blue-600"></i>
+                      Deploy Location
+                    </div>
+                  </label>
+                  <select
+                    name="deploy_location"
+                    [value]="formModel.deploy_location"
+                    disabled
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-4 bg-gray-100 text-gray-700 cursor-not-allowed shadow-lg backdrop-blur-sm">
+                    <option value="">Select deployment location</option>
+                    <option value="aws">🟠 AWS (Amazon Web Services)</option>
+                    <option value="gcp">🔵 GCP (Google Cloud Platform)</option>
+                    <option value="azure">🔷 Azure (Microsoft Azure)</option>
+                    <option value="Linux">🐧 Linux Server</option>
+                  </select>
+                </div>
+
+                <div class="space-y-3">
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-layer-group text-blue-600"></i>
+                      Deploy Type
+                    </div>
+                  </label>
+                  <select
+                    name="deploy_type"
+                    [value]="formModel.deploy_type"
+                    disabled
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-4 bg-gray-100 text-gray-700 cursor-not-allowed shadow-lg backdrop-blur-sm">
+                    <option value="">Select deployment type</option>
+                    <option value="Frontend">🎨 Frontend Application</option>
+                    <option value="Backend">⚙️ Backend Service</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Connection Details Section -->
+            <div class="space-y-6">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                  <i class="fas fa-network-wired text-white text-xs"></i>
+                </div>
+                <h4 class="text-lg font-semibold text-gray-800">Connection Details</h4>
+                <div class="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+              </div>
+              
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="space-y-3">
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-server text-blue-600"></i>
+                      Host
+                    </div>
+                  </label>
+                  <input
+                    name="host"
+                    [value]="formModel.host"
+                    readonly
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-4 bg-gray-100 text-gray-700 cursor-not-allowed shadow-lg backdrop-blur-sm font-mono"/>
+                  <p class="text-xs text-gray-500 flex items-center gap-2">
+                    <i class="fas fa-lightbulb text-gray-400"></i>
+                    IP address or hostname
+                  </p>
+                </div>
+
+                <div class="space-y-3">
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-shield-alt text-blue-600"></i>
+                      Protocol
+                    </div>
+                  </label>
+                  <select
+                    name="protocol"
+                    [value]="formModel.protocol"
+                    disabled
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-4 bg-gray-100 text-gray-700 cursor-not-allowed shadow-lg backdrop-blur-sm">
+                    <option value="">Select transfer protocol</option>
+                    <option value="sftp">🔐 SFTP (SSH File Transfer Protocol)</option>
+                    <option value="scp">📁 SCP (Secure Copy Protocol)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Authentication Section -->
+            <div class="space-y-6">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                  <i class="fas fa-key text-white text-xs"></i>
+                </div>
+                <h4 class="text-lg font-semibold text-gray-800">Authentication</h4>
+                <div class="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+              </div>
+              
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="space-y-3">
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-user text-blue-600"></i>
+                      Username
+                    </div>
+                  </label>
+                  <input
+                    name="username"
+                    [value]="formModel.username"
+                    readonly
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-4 bg-gray-100 text-gray-700 cursor-not-allowed shadow-lg backdrop-blur-sm"/>
+                  <p class="text-xs text-gray-500 flex items-center gap-2">
+                    <i class="fas fa-lightbulb text-gray-400"></i>
+                    Account username for authentication
+                  </p>
+                </div>
+
+                <div class="space-y-3">
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-lock text-blue-600"></i>
+                      Password
+                    </div>
+                  </label>
+                  <input
+                    name="password"
+                    value="••••••••••••"
+                    readonly
+                    type="password"
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-4 bg-gray-100 text-gray-700 cursor-not-allowed shadow-lg backdrop-blur-sm"/>
+                  <p class="text-xs text-gray-500 flex items-center gap-2">
+                    <i class="fas fa-lightbulb text-gray-400"></i>
+                    Secure password for authentication
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Path Configuration Section -->
+            <div class="space-y-6">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                  <i class="fas fa-folder text-white text-xs"></i>
+                </div>
+                <h4 class="text-lg font-semibold text-gray-800">Path Configuration</h4>
+                <div class="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+              </div>
+              
+              <div class="grid grid-cols-1 gap-8">
+                <div class="space-y-3">
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-folder-open text-blue-600"></i>
+                      Remote Path
+                    </div>
+                  </label>
+                  <input
+                    name="remote_path"
+                    [value]="formModel.remote_path"
+                    readonly
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-4 bg-gray-100 text-gray-700 cursor-not-allowed shadow-lg backdrop-blur-sm font-mono"/>
+                  <p class="text-xs text-gray-500 flex items-center gap-2">
+                    <i class="fas fa-lightbulb text-gray-400"></i>
+                    Target directory path on the remote server
+                  </p>
+                </div>
+
+                <div class="space-y-3">
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-terminal text-blue-600"></i>
+                      Trigger Script Path
+                    </div>
+                  </label>
+                  <div class="flex items-center gap-4">
+                    <input
+                      name="trigger_script_path"
+                      [value]="formModel.trigger_script_path"
+                      readonly
+                      class="flex-1 border border-gray-300 rounded-2xl px-5 py-4 bg-gray-100 text-gray-700 cursor-not-allowed shadow-lg backdrop-blur-sm font-mono"/>
+                    <button
+                      type="button"
+                      (click)="triggerScript()"
+                      class="group relative px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white 
+                      rounded-2xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all 
+                      duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 
+                      flex items-center gap-2 font-semibold">
+                      <div class="p-1 rounded-lg">
+                        <i class="fas fa-play text-sm"></i>
+                      </div>
+                      <span>Trigger</span>
+                    </button>
+                  </div>
+                  <p class="text-xs text-gray-500 flex items-center gap-2">
+                    <i class="fas fa-lightbulb text-gray-400"></i>
+                    Path to the script that will be executed after deployment
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced File Operations Section - Shows when connected -->
+    <div *ngIf="isConnected" class="max-w-7xl mx-auto">
+      <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+        <!-- Card Header -->
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50/50 px-8 py-6 border-b border-gray-200/50">
+          <h3 class="text-xl font-bold text-gray-800 flex items-center gap-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+              <i class="fas fa-folder text-white text-sm"></i>
+            </div>
+            Remote File Operations
+          </h3>
+        </div>
+
+        <div class="p-8 space-y-8">
+          <!-- Enhanced File Upload Section -->
+          <div class="space-y-6">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                <i class="fas fa-upload text-white text-xs"></i>
+              </div>
+              <h4 class="text-lg font-semibold text-gray-800">File Upload</h4>
+              <div class="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+            </div>
+            
+            <div class="space-y-4">
+              <div class="space-y-3">
+                <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                  <div class="flex items-center gap-2">
+                    <i class="fas fa-file text-blue-600"></i>
+                    Choose File
+                  </div>
+                </label>
+                <input 
+                  type="file" 
+                  (change)="onFileSelected($event)" 
+                  class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-2xl file:border-0 
+                  file:text-sm file:font-semibold file:bg-gradient-to-r file:from-blue-50 file:to-indigo-50 
+                  file:text-blue-700 hover:file:from-blue-100 hover:file:to-indigo-100 file:transition-all 
+                  file:duration-300 border border-gray-300 rounded-2xl bg-white shadow-lg hover:shadow-xl 
+                  transition-all duration-300 p-4" 
+                  [disabled]="selectedFile" />
+              </div>
+
+              <!-- Enhanced Selected File Info and Actions -->
+              <div *ngIf="selectedFile" class="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-2xl shadow-lg backdrop-blur-sm">
+                <div class="flex items-center justify-between gap-4">
+                  <div class="flex items-center gap-4 flex-1">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                      <i class="fas fa-file text-white text-lg"></i>
+                    </div>
+                    <div>
+                      <div class="font-bold text-gray-800">{{ selectedFile.name }}</div>
+                      <div class="text-sm text-gray-600">{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</div>
+                    </div>
+                  </div>
+
+                  <div class="flex gap-3">
+                    <button 
+                      (click)="uploadFile()" 
+                      class="group relative px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white 
+                      rounded-2xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all 
+                      duration-300 shadow-lg hover:shadow-xl flex items-center gap-2">
+                      <i class="fas fa-upload"></i>
+                      <span class="font-semibold">Upload</span>
+                    </button>
+
+                    <button 
+                      (click)="removeFile()" 
+                      class="group relative px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white 
+                      rounded-2xl hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all 
+                      duration-300 shadow-lg hover:shadow-xl">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enhanced Remote Files Section -->
+          <div class="space-y-6">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center gap-3">
+                <div class="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                  <i class="fas fa-server text-white text-xs"></i>
+                </div>
+                <h4 class="text-lg font-semibold text-gray-800">Remote Files</h4>
+                <div class="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent ml-4"></div>
+              </div>
+              
+              <button 
+                (click)="loadFiles()" 
+                class="group relative px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white 
+                rounded-2xl hover:from-gray-600 hover:to-gray-700 transform hover:scale-105 transition-all 
+                duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 text-sm">
+                <i class="fas fa-sync-alt"></i>
+                <span class="font-semibold">Refresh</span>
+              </button>
+            </div>
+            
+            <div class="bg-gradient-to-br from-gray-50 to-blue-50/30 border border-gray-200/50 rounded-2xl p-6 backdrop-blur-sm">
+              <ul *ngIf="fileList.length > 0; else noFiles" class="space-y-4">
+                <li *ngFor="let file of fileList" class="p-4 bg-white/80 border border-gray-200/50 rounded-xl 
+                hover:bg-white hover:shadow-lg transition-all duration-300 backdrop-blur-sm">
+                  <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-file-alt text-gray-600"></i>
+                      </div>
+                      <span class="font-semibold text-gray-800">{{ file }}</span>
+                    </div>
+                    <div class="flex gap-3">
+                      <button 
+                        (click)="downloadFile(file)" 
+                        class="group relative px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white 
+                        rounded-xl hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all 
+                        duration-300 shadow-md hover:shadow-lg flex items-center gap-2 text-sm">
+                        <i class="fas fa-download"></i>
+                        <span class="font-semibold">Download</span>
+                      </button>
+                      <button 
+                        (click)="deleteFile(file)" 
+                        class="group relative px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white 
+                        rounded-xl hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all 
+                        duration-300 shadow-md hover:shadow-lg flex items-center gap-2 text-sm">
+                        <i class="fas fa-trash"></i>
+                        <span class="font-semibold">Delete</span>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <ng-template #noFiles>
+                <div class="text-center py-12">
+                  <div class="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-folder-open text-3xl text-gray-400"></i>
+                  </div>
+                  <div class="space-y-2">
+                    <h5 class="text-lg font-semibold text-gray-600">No Files Found</h5>
+                    <p class="text-sm text-gray-500">No files found on the remote server.</p>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+
+          <!-- Enhanced Logs Section -->
+          <div class="space-y-6">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-6 h-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                <i class="fas fa-terminal text-white text-xs"></i>
+              </div>
+              <h4 class="text-lg font-semibold text-gray-800">Activity Logs</h4>
+              <div class="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+            </div>
+            
+            <div class="relative bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 shadow-2xl backdrop-blur-sm border border-gray-800/50">
+              <!-- Terminal Header -->
+              <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-700/50">
+                <div class="flex gap-2">
+                  <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                </div>
+                <span class="text-gray-400 text-sm font-mono ml-4">Activity Terminal</span>
+              </div>
+              
+              <!-- Terminal Content -->
+              <div class="font-mono text-sm max-h-64 overflow-y-auto custom-scrollbar">
+                <div *ngIf="logs.length === 0" class="text-gray-500 italic flex items-center gap-2 py-4">
+                  <i class="fas fa-info-circle text-gray-600"></i>
+                  <span>No activity logs yet... Waiting for operations...</span>
+                </div>
+                <div *ngFor="let log of logs" class="mb-2 flex items-start gap-2 text-green-400 hover:text-green-300 transition-colors duration-200">
+                  <span class="text-gray-600 text-xs mt-1">></span>
+                  <span>{{ log }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-</div>
+<style>
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #374151;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 3px;
+}
+
+/* Enhanced form focus states */
+input:focus, select:focus {
+  transform: translateY(-2px);
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* File input styling enhancement */
+input[type="file"]::file-selector-button {
+  transition: all 0.3s ease;
+}
+
+/* Terminal animation for new log entries */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.log-entry {
+  animation: slideInUp 0.3s ease-out;
+}
+
+/* Disabled state enhancements */
+input[readonly], select[disabled] {
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  border-color: #d1d5db;
+  position: relative;
+}
+
+input[readonly]:before, select[disabled]:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    rgba(156, 163, 175, 0.1) 2px,
+    rgba(156, 163, 175, 0.1) 4px
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Button hover animations */
+button:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Card hover effects */
+.bg-white\/80:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+/* Gradient animations */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+</style>
