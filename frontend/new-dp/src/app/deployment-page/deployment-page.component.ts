@@ -78,33 +78,7 @@ export class DeploymentPageComponent implements OnInit {
     }
   }
  
-  
-  triggerScript(): void {
-    if (!this.formModel?.name) {
-      this.addLog('❌ Connection name is missing, cannot trigger script.');
-      return;
-    }
  
-    this.addLog(`🚀 Triggering script for: ${this.formModel.name}`);
- 
-    this.http.post(`${this.baseUrl}/trigger-script/${this.formModel.name}`, {})
-      .subscribe({
-        next: (res: any) => {
-          this.addLog(`✅ Script executed successfully: ${JSON.stringify(res.script_result || res)}`);
-          this.snackBar.open('Script triggered successfully', 'Close', {
-            duration: 3000,
-            panelClass: ['toast-success']
-          });
-        },
-        error: (err) => {
-          this.addLog(`❌ Failed to trigger script: ${err.error?.detail || err.message}`);
-          this.snackBar.open(`Failed to trigger script: ${err.error?.detail || err.message}`, 'Close', {
-            duration: 4000,
-            panelClass: ['toast-error']
-          });
-        }
-      });
-  }
  
   // Main connection method - this will be called when Connect button is clicked
   connectWithFormName(): void {
@@ -143,6 +117,36 @@ export class DeploymentPageComponent implements OnInit {
       duration: 4000,
       panelClass: ['toast-success']
     });
+  }
+
+   // Trigger Script 
+  triggerScript(): void {
+    if (!this.formModel?.name || !this.isConnected) {
+      this.addLog('❌ Connection name is missing, cannot trigger script.');
+      return;
+    }
+ 
+    this.addLog(`🚀 Triggering script for: ${this.formModel.name}`);
+ 
+    this.http.post(`${this.baseUrl}/trigger-script/${this.formModel.name}`, {})
+      .subscribe({
+        next: (res: any) => {
+          this.addLog(`✅ Script executed successfully: ${JSON.stringify(res.script_result || res)}`);
+          if(this.isConnected){
+          this.snackBar.open('Script triggered successfully', 'Close', {
+            duration: 3000,
+            panelClass: ['toast-success']
+          });
+        }
+        },
+        error: (err) => {
+          this.addLog(`❌ Failed to trigger script: ${err.error?.detail || err.message}`);
+          this.snackBar.open(`Failed to trigger script: ${err.error?.detail || err.message}`, 'Close', {
+            duration: 4000,
+            panelClass: ['toast-error']
+          });
+        }
+      });
   }
  
   // Disconnect method
