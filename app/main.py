@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+# from azure_blob_client import upload_to_blob
 from enum import Enum
 from pymongo import MongoClient
 from datetime import datetime
@@ -308,3 +309,18 @@ def validate_connection(
         return {"valid": True}
     except Exception as e:
         return {"valid": False, "error": "Authentication Failed. Please try again"}
+    
+
+
+# Azure upload
+
+# @app.post("/upload-to-azure")
+# def upload_to_azure():
+#     result = upload_to_blob(
+#         account_name="mystorageacct",
+#         container="uploads",
+#         blob_name="reports/test.txt",
+#         local_path="../test.txt"
+#     )
+#     return {"status": "success", "message": result}
+
